@@ -1,9 +1,5 @@
 #include "cars.h"
 
-#include <fstream>
-#include <iostream>
-#include <filesystem>
-
 std::vector<Item> CARS::CarsList;
 std::vector<Item> CARS::WheelsList;
 std::vector<Item> CARS::BoostsList;
@@ -95,6 +91,13 @@ void CARS::LoadAllItems(std::string file_path)
 
 		   CARS::ToppersList.push_back(current_item);
 	   }
+	   std::cout << "Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
    }  
    file.close();
+   std::cout << "[+] Loaded " << CARS::CarsList.size()
+	   + CARS::WheelsList.size()
+	   + CARS::BoostsList.size()
+	   + CARS::AntennasList.size()
+	   + CARS::ToppersList.size()
+	   << "items" << std::endl;
 }

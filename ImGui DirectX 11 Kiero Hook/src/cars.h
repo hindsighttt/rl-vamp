@@ -1,5 +1,11 @@
+#ifndef CARS_H
+# define CARS_H
+
 #include <vector>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <filesystem>
 
 struct Item
 {
@@ -22,3 +28,5 @@ namespace CARS
 	extern std::vector<int> ValidWheels;
 	void LoadAllItems(std::string file_path);
 }
+
+#endif CARS_H

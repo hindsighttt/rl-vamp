@@ -11,7 +11,6 @@ int HOOKS::decalID = 0;
 int HOOKS::antennaID = 0;
 int HOOKS::goalExplosionID = 0;
 
-std::vector<int> signature{ 0x41, 0x8B, 0x00 };
 uintptr_t base = (uintptr_t)GetModuleHandleA("RocketLeague.exe");
 uintptr_t steamDll = (uintptr_t)GetModuleHandleA("steam_api64.dll");
 
@@ -20,7 +19,7 @@ uintptr_t epic_addr = 0x3B42B0; // Epic
 uintptr_t steam_addr = 0x3B2DF0; // Steam
 
 uintptr_t addr;
-auto OriginalAddress = HOOKS::FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9");
+auto OriginalAddress = HOOKS::FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9"); // 0x41 0x8B 0x00
 
 bool IsValidCar(Car* car) 
 {
@@ -120,6 +119,7 @@ void HOOKS::SetupHooks()
 	if (OriginalAddress == nullptr)
 		std::cerr << "[-] Pattern not found!" << std::endl;
 	std::cout << "[+] MinHook Initialized" << std::endl;
+	std::cout << "[+] Pattern found at: " << OriginalAddress << std::endl;
 	MH_STATUS STATUS = MH_CreateHook(reinterpret_cast<void*>(OriginalAddress), &hkProcessObject, reinterpret_cast<void**>(&fnProcessObject));
 	if (STATUS == MH_OK)
 		std::cout << "[+] Hook Successfully Created" << std::endl;
@@ -140,5 +140,4 @@ void HOOKS::SetupHooks()
 		exit(EXIT_FAILURE);
 	}
     HOOKS::init = true;
-	printf("\n");
 }
