@@ -91,7 +91,7 @@ void CARS::LoadAllItems(std::string file_path)
 
 		   CARS::ToppersList.push_back(current_item);
 	   }
-	   std::cout << "Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
+	   std::cout << "[+] Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
    }  
    file.close();
    std::cout << "[+] Loaded " << CARS::CarsList.size()
