@@ -1,12 +1,6 @@
 #include "hooks.h"
 #include "cars.h"
 
-#include <iostream>
-#include <Windows.h>
-#include <Psapi.h>
-#include <vector>
-#include <algorithm>
-
 bool HOOKS::enabled = false;
 bool HOOKS::init = false;
 int HOOKS::carID = 0;
@@ -21,11 +15,11 @@ std::vector<int> signature{ 0x41, 0x8B, 0x00 };
 uintptr_t base = (uintptr_t)GetModuleHandleA("RocketLeague.exe");
 uintptr_t steamDll = (uintptr_t)GetModuleHandleA("steam_api64.dll");
 
-uintptr_t epic_addr = 0x3B42B0; // EPIC
+// relative address will only be used as a fallback mechanism if the pattern changes
+uintptr_t epic_addr = 0x3B42B0; // Epic
 uintptr_t steam_addr = 0x3B2DF0; // Steam
 
 uintptr_t addr;
-//auto OriginalAddress = HOOKS::FindPattern(L"RocketLeague.exe", "41 8b 00 89 02 C3 CC");
 auto OriginalAddress = HOOKS::FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9");
 
 bool IsValidCar(Car* car) 
@@ -69,10 +63,8 @@ __int64 __fastcall hkProcessObject(void* gameContext, void* unknown, void* gameO
 	return fnProcessObject(gameContext, unknown, gameObject);
 }
 
-
 std::uint8_t* HOOKS::FindPattern(const wchar_t* wszModuleName, const char* szPattern)
 {
-    // Helper lambda to convert pattern string to bytes and mask
     auto PatternToBytes = [](const char* pattern, std::vector<int>& bytes) {
         const char* current = pattern;
         while (*current) {
@@ -90,7 +82,6 @@ std::uint8_t* HOOKS::FindPattern(const wchar_t* wszModuleName, const char* szPat
         }
     };
 
-    // Get module info
     HMODULE hModule = GetModuleHandleW(wszModuleName);
     if (!hModule) return nullptr;
 
@@ -127,28 +118,26 @@ void HOOKS::SetupHooks()
 	else
 		addr = steam_addr;
 	if (OriginalAddress == nullptr)
-		std::cout << "[-] Pattern not found!" << std::endl;
-	printf("[+] MinHook Initialized\n");
+		std::cerr << "[-] Pattern not found!" << std::endl;
+	std::cout << "[+] MinHook Initialized" << std::endl;
 	MH_STATUS STATUS = MH_CreateHook(reinterpret_cast<void*>(OriginalAddress), &hkProcessObject, reinterpret_cast<void**>(&fnProcessObject));
-	//MH_STATUS STATUS = MH_CreateHook(reinterpret_cast<void*>(base + addr), &hkProcessObject, reinterpret_cast<void**>(&fnProcessObject));
 	if (STATUS == MH_OK)
-		printf("[+] Hook Successfully Created\n");
+		std::cout << "[+] Hook Successfully Created" << std::endl;
 	else
 	{
 		printf("[-] Failed To Create Hook\n");
 		Sleep(200);
-		exit(666);
+		exit(EXIT_FAILURE);
 	}
 
 	STATUS = MH_EnableHook(reinterpret_cast<void*>(OriginalAddress));
-	//STATUS = MH_EnableHook(reinterpret_cast<void*>(base + addr));
 	if (STATUS == MH_OK)
-		printf("[+] Hook Successfully Enabled\n");
+		std::cout << "[+] Hook Successfully Enabled" << std::endl;
 	else
 	{
-		printf("[-] Failed To Enable Hook\n");
+		std::cerr << "[-] Failed to enable hooks" << std::endl;
 		Sleep(200);
-		exit(666);
+		exit(EXIT_FAILURE);
 	}
     HOOKS::init = true;
 	printf("\n");

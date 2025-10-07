@@ -83,39 +83,39 @@ void GUI::Render()
 	if (!state)
 		return;
 	ImGui::Begin("revamp", (bool*)0, ImGuiWindowFlags_NoCollapse);
-	ImGui::Checkbox("Enabled", &HOOKS::enabled);
+	{
+		ImGui::Checkbox("Enabled", &HOOKS::enabled);
 
-	// CARS
-	std::vector<const char*> Caritems;
+		// CARS
+		std::vector<const char*> Caritems;
+		for (int i = 0; i < CARS::CarsList.size(); i++)
+			Caritems.push_back(CARS::CarsList[i].ingameName.c_str());
+		ImGui::Combo("Body", &selectedCarIndex, Caritems.data(), Caritems.size());
+		HOOKS::carID = CARS::CarsList[selectedCarIndex].ingameID;
 
-	for (int i = 0; i < CARS::CarsList.size(); i++)
-		Caritems.push_back(CARS::CarsList[i].ingameName.c_str());
-	ImGui::Combo("Body", &selectedCarIndex, Caritems.data(), Caritems.size());
-	HOOKS::carID = CARS::CarsList[selectedCarIndex].ingameID;
+		// Wheels
+		std::vector<const char*> Wheelsitems;
+		for (int i = 0; i < CARS::WheelsList.size(); i++)
+				Wheelsitems.push_back(CARS::WheelsList[i].ingameName.c_str());
+		ImGui::Combo("Wheels", &selectedWheelsIndex, Wheelsitems.data(), Wheelsitems.size());
+		HOOKS::wheelID = CARS::WheelsList[selectedWheelsIndex].ingameID;
 
-	// Wheels
-	std::vector<const char*> Wheelsitems;
-	for (int i = 0; i < CARS::WheelsList.size(); i++)
-			Wheelsitems.push_back(CARS::WheelsList[i].ingameName.c_str());
-	ImGui::Combo("Wheels", &selectedWheelsIndex, Wheelsitems.data(), Wheelsitems.size());
-	HOOKS::wheelID = CARS::WheelsList[selectedWheelsIndex].ingameID;
+		// Boost
+		std::vector<const char*> Boostitems;
+		for (int i = 0; i < CARS::BoostsList.size(); i++)
+			Boostitems.push_back(CARS::BoostsList[i].ingameName.c_str());
+		ImGui::Combo("Boost", &selectedBoostIndex, Boostitems.data(), Boostitems.size());
+		HOOKS::boostID = CARS::BoostsList[selectedBoostIndex].ingameID;
 
-	// Boost
-	std::vector<const char*> Boostitems;
-	for (int i = 0; i < CARS::BoostsList.size(); i++)
-		Boostitems.push_back(CARS::BoostsList[i].ingameName.c_str());
-	ImGui::Combo("Boost", &selectedBoostIndex, Boostitems.data(), Boostitems.size());
-	HOOKS::boostID = CARS::BoostsList[selectedBoostIndex].ingameID;
+		std::vector<const char*> TopperItems;
+		for (int i = 0; i < CARS::ToppersList.size(); i++)
+			TopperItems.push_back(CARS::ToppersList[i].ingameName.c_str());
+		ImGui::Combo("Topper", &selectedTopperIndex, TopperItems.data(), TopperItems.size());
+		HOOKS::hatID = CARS::ToppersList[selectedTopperIndex].ingameID;
 
-	std::vector<const char*> TopperItems;
-	for (int i = 0; i < CARS::ToppersList.size(); i++)
-		TopperItems.push_back(CARS::ToppersList[i].ingameName.c_str());
-	ImGui::Combo("Topper", &selectedTopperIndex, TopperItems.data(), TopperItems.size());
-	HOOKS::hatID = CARS::ToppersList[selectedTopperIndex].ingameID;
-
-	ImGui::NewLine();
-	ImGui::Text("Press \"DELETE\" to hide the menu");
-	ImGui::Text("Warning: Disabling the plugin in bakkesmod will close the game");
-
+		ImGui::NewLine();
+		ImGui::Text("Press \"DELETE\" to hide the menu");
+		ImGui::Text("Warning: Disabling the plugin in bakkesmod will close the game");
+	}
 	ImGui::End();
 }

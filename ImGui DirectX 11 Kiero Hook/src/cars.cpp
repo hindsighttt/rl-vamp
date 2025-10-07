@@ -58,7 +58,7 @@ void CARS::LoadAllItems(std::string file_path)
 		   CARS::CarsList.push_back(current_item);
 		   CARS::ValidCars.push_back(std::atoi(id_str.c_str()));
 	   }
-	   if (type == "Wheels")
+	   else if (type == "Wheels")
 	   {
 		   Item current_item;
 		   current_item.ingameID = std::atoi(id_str.c_str());
@@ -68,7 +68,7 @@ void CARS::LoadAllItems(std::string file_path)
 		   CARS::WheelsList.push_back(current_item);
 		   CARS::ValidWheels.push_back(std::atoi(id_str.c_str()));
 	   }
-	   if (type == "Boost")
+	   else if (type == "Boost")
 	   {
 		   Item current_item;
 		   current_item.ingameID = std::atoi(id_str.c_str());
@@ -77,7 +77,7 @@ void CARS::LoadAllItems(std::string file_path)
 
 		   CARS::BoostsList.push_back(current_item);
 	   }
-	   if (type == "Antenna")
+	   else if (type == "Antenna")
 	   {
 		   Item current_item;
 		   current_item.ingameID = std::atoi(id_str.c_str());
@@ -86,7 +86,7 @@ void CARS::LoadAllItems(std::string file_path)
 
 		   CARS::AntennasList.push_back(current_item);
 	   }
-	   if (type == "Hat")
+	   else if (type == "Hat")
 	   {
 		   Item current_item;
 		   current_item.ingameID = std::atoi(id_str.c_str());

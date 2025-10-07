@@ -3,6 +3,9 @@
 #include <Windows.h>
 #include <cstdint>
 #include <vector>
+#include <iostream>
+#include <Psapi.h>
+#include <algorithm>
 
 namespace HOOKS
 {
@@ -18,7 +21,6 @@ namespace HOOKS
     std::uint8_t* FindPattern(const wchar_t* wszModuleName, const char* szPattern);
     void SetupHooks();
 }
-
 
 class Car
 {
