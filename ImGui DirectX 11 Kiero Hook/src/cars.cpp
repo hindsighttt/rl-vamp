@@ -99,5 +99,5 @@ void CARS::LoadAllItems(std::string file_path)
 	   + CARS::BoostsList.size()
 	   + CARS::AntennasList.size()
 	   + CARS::ToppersList.size()
-	   << "items" << std::endl;
+	   << " items" << std::endl;
 }

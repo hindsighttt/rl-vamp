@@ -181,6 +181,7 @@
     <ClCompile Include="src\cars.cpp" />
     <ClCompile Include="src\GUI.cpp" />
     <ClCompile Include="src\hooks.cpp" />
+    <ClCompile Include="src\preset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kiero\minhook\dll_resources\MinHook.def" />
@@ -211,6 +212,7 @@
     <ClInclude Include="src\cars.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\hooks.h" />
+    <ClInclude Include="src\preset.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

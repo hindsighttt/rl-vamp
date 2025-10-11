@@ -1,13 +1,14 @@
 #include "GUI.h"
 #include "cars.h"
+#include "preset.h"
 #include <iostream>
 
 bool state = true;
-int selectedCarIndex = 0;
-int selectedWheelsIndex = 0;
-int selectedBoostIndex = 0;
-int selectedTopperIndex = 0;
-int selectedAntennaIndex = 0;
+int GUI::selectedCarIndex = 0;
+int GUI::selectedWheelsIndex = 0;
+int GUI::selectedBoostIndex = 0;
+int GUI::selectedTopperIndex = 0;
+int GUI::selectedAntennaIndex = 0;
 
 void GUI::ApplyStyle()
 {
@@ -75,6 +76,8 @@ void GUI::ApplyStyle()
 
 void GUI::Render()
 {
+	static std::string presetName = "";
+	static int selectedPresetIndex = 0;
 	static bool previousKeyState = GetAsyncKeyState(VK_DELETE) || GetAsyncKeyState(VK_INSERT);
 
 	if (!previousKeyState && (GetAsyncKeyState(VK_DELETE) || GetAsyncKeyState(VK_INSERT)))
@@ -91,36 +94,87 @@ void GUI::Render()
 		std::vector<const char*> Caritems;
 		for (int i = 0; i < CARS::CarsList.size(); i++)
 			Caritems.push_back(CARS::CarsList[i].ingameName.c_str());
-		ImGui::Combo("Body", &selectedCarIndex, Caritems.data(), Caritems.size());
-		HOOKS::carID = CARS::CarsList[selectedCarIndex].ingameID;
+		ImGui::Combo("Body", &GUI::selectedCarIndex, Caritems.data(), Caritems.size());
+		HOOKS::carID = CARS::CarsList[GUI::selectedCarIndex].ingameID;
 
 		// Wheels
 		std::vector<const char*> Wheelsitems;
 		for (int i = 0; i < CARS::WheelsList.size(); i++)
 				Wheelsitems.push_back(CARS::WheelsList[i].ingameName.c_str());
-		ImGui::Combo("Wheels", &selectedWheelsIndex, Wheelsitems.data(), Wheelsitems.size());
-		HOOKS::wheelID = CARS::WheelsList[selectedWheelsIndex].ingameID;
+		ImGui::Combo("Wheels", &GUI::selectedWheelsIndex, Wheelsitems.data(), Wheelsitems.size());
+		HOOKS::wheelID = CARS::WheelsList[GUI::selectedWheelsIndex].ingameID;
 
 		// Boost
 		std::vector<const char*> Boostitems;
 		for (int i = 0; i < CARS::BoostsList.size(); i++)
 			Boostitems.push_back(CARS::BoostsList[i].ingameName.c_str());
-		ImGui::Combo("Boost", &selectedBoostIndex, Boostitems.data(), Boostitems.size());
-		HOOKS::boostID = CARS::BoostsList[selectedBoostIndex].ingameID;
+		ImGui::Combo("Boost", &GUI::selectedBoostIndex, Boostitems.data(), Boostitems.size());
+		HOOKS::boostID = CARS::BoostsList[GUI::selectedBoostIndex].ingameID;
 
 		// Toppers
 		std::vector<const char*> TopperItems;
 		for (int i = 0; i < CARS::ToppersList.size(); i++)
 			TopperItems.push_back(CARS::ToppersList[i].ingameName.c_str());
-		ImGui::Combo("Topper", &selectedTopperIndex, TopperItems.data(), TopperItems.size());
-		HOOKS::hatID = CARS::ToppersList[selectedTopperIndex].ingameID;
+		ImGui::Combo("Topper", &GUI::selectedTopperIndex, TopperItems.data(), TopperItems.size());
+		HOOKS::hatID = CARS::ToppersList[GUI::selectedTopperIndex].ingameID;
 
 		// Antennas
 		std::vector<const char*> AntennaItems;
 		for (int i = 0; i < CARS::AntennasList.size(); i++)
 			AntennaItems.push_back(CARS::AntennasList[i].ingameName.c_str());
-		ImGui::Combo("Antennas", &selectedAntennaIndex, AntennaItems.data(), AntennaItems.size());
-		HOOKS::antennaID = CARS::AntennasList[selectedAntennaIndex].ingameID;
+		ImGui::Combo("Antennas", &GUI::selectedAntennaIndex, AntennaItems.data(), AntennaItems.size());
+		HOOKS::antennaID = CARS::AntennasList[GUI::selectedAntennaIndex].ingameID;
+
+		if (ImGui::Button("Reload Items"))
+		{
+			CARS::CarsList.clear();
+			CARS::WheelsList.clear();
+			CARS::BoostsList.clear();
+			CARS::ToppersList.clear();
+			CARS::AntennasList.clear();
+
+			GUI::selectedAntennaIndex = 0;
+			GUI::selectedCarIndex = 0;
+			GUI::selectedWheelsIndex = 0;
+			GUI::selectedBoostIndex = 0;
+			GUI::selectedTopperIndex = 0;
+			CARS::LoadAllItems("items.csv");
+		}
+
+		ImGui::NewLine();
+		std::vector<const char*> presets;
+		for (int i = 0; i < PRESET::presetList.size(); i++)
+			presets.push_back(PRESET::presetList[i].c_str());
+		if (ImGui::Combo("Saved Presets", &selectedPresetIndex, presets.data(), presets.size()))
+			presetName = PRESET::presetList[selectedPresetIndex];
+
+		ImGui::InputText("Preset", presetName.data(), MAX_PATH);
+		if (ImGui::Button("Save"))
+		{
+			std::vector<Item> itemList = { 
+				CARS::CarsList[GUI::selectedCarIndex], 
+				CARS::WheelsList[GUI::selectedWheelsIndex],
+				CARS::BoostsList[GUI::selectedBoostIndex],
+				CARS::ToppersList[GUI::selectedTopperIndex], 
+				CARS::AntennasList[GUI::selectedAntennaIndex]
+			};
+
+			PRESET::SavePreset(presetName, itemList);
+			PRESET::presetList.clear();
+			PRESET::FindExistingPresets();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load"))
+		{
+			PRESET::LoadPreset(presetName);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Delete"))
+		{
+			remove(presetName.c_str());
+			PRESET::presetList.clear();
+			PRESET::FindExistingPresets();
+		}
 
 		ImGui::NewLine();
 		ImGui::Text("Press \"DELETE\" to hide the menu");

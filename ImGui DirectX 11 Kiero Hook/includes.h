@@ -9,6 +9,7 @@
 #include "src/hooks.h"
 #include "src/GUI.h"
 #include "src/cars.h"
+#include "src/preset.h"
 
 typedef HRESULT(__stdcall* Present) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);

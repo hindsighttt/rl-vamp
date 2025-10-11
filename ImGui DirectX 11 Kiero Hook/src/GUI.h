@@ -13,4 +13,10 @@ namespace GUI
 {
 	void ApplyStyle();
 	void Render();
+
+	extern int selectedCarIndex;
+	extern int selectedWheelsIndex;
+	extern int selectedBoostIndex;
+	extern int selectedTopperIndex;
+	extern int selectedAntennaIndex;
 }
