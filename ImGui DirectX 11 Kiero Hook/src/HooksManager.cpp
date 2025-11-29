@@ -19,15 +19,16 @@ Hook::Hook()
 
 Hook::~Hook() // Disables the hook and removes it
 {
-    this->DisableHook();
-    MH_RemoveHook(this->_functionAddr);
+    if (this->_functionAddr)
+        this->DisableHook();
+    if (this->_functionAddr)
+        MH_RemoveHook(this->_functionAddr);
+    std::cout << "[Hook::~Hook]: Successfully destroyed hook " << this->_functionName << std::endl;
 }
 
 bool Hook::InitializeHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr)
 {
-    MH_STATUS currentStatus;
-
-    currentStatus = MH_CreateHook(targetFunctionAddr, detourFunctionPtr, this->_storedFunctionPtr);
+    MH_STATUS currentStatus = MH_CreateHook(targetFunctionAddr, detourFunctionPtr, &this->_storedFunctionPtr);
     if (currentStatus != MH_OK)
         return false;
     this->_detourFunctionPtr = detourFunctionPtr;
@@ -37,9 +38,8 @@ bool Hook::InitializeHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr)
 
 void Hook::EnableHook()
 {
-    MH_STATUS currentStatus;
-
-    currentStatus = MH_EnableHook(this->_functionAddr);
+    if (!this->_functionAddr) return;
+    MH_STATUS currentStatus = MH_EnableHook(this->_functionAddr);
     if (currentStatus != MH_OK)
         return;
     this->_state = true;
@@ -47,9 +47,8 @@ void Hook::EnableHook()
 
 void Hook::DisableHook()
 {
-    MH_STATUS currentStatus;
-
-    currentStatus = MH_DisableHook(this->_functionAddr);
+    if (!this->_functionAddr) return;
+    MH_STATUS currentStatus = MH_DisableHook(this->_functionAddr);
     if (currentStatus != MH_OK)
         return;
     this->_state = false;
@@ -64,7 +63,7 @@ bool Hook::ToggleHook()
     return this->_state;
 }
 
-LPVOID* Hook::GetStoredFunctionPtr()
+LPVOID Hook::GetStoredFunctionPtr()
 {
     return this->_storedFunctionPtr;
 }
@@ -76,16 +75,14 @@ std::string Hook::GetFunctionName()
 
 HooksManager::HooksManager()
 {
-    MH_STATUS currentStatus;
-
-    currentStatus = MH_Initialize();
+    MH_STATUS currentStatus = MH_Initialize();
     if (currentStatus != MH_OK && currentStatus != MH_ERROR_ALREADY_INITIALIZED)
         std::cerr << "[HooksManager::HooksManager]: Failed to initialize MinHook" << std::endl;
 }
 
 HooksManager::~HooksManager()
 {
-    this->DestroyAllHooks();    
+    this->DestroyAllHooks();
 }
 
 std::uint8_t *HooksManager::FindPattern(const wchar_t *wszModuleName, const char *szPattern)
@@ -138,21 +135,25 @@ std::uint8_t *HooksManager::FindPattern(const wchar_t *wszModuleName, const char
 
 Hook &HooksManager::CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr, std::string functionName)
 {
-    Hook hook(functionName);
-    bool success = hook.InitializeHook(targetFunctionAddr, detourFunctionPtr);
+    Hook* hook = new Hook(functionName);
+    bool success = hook->InitializeHook(targetFunctionAddr, detourFunctionPtr);
     if (!success)
-        return hook;
+    {
+        std::cerr << "[HooksManager::CreateHook]: Failed to initialized hook for " << functionName << std::endl;
+        return *hook;
+    }
     this->_hookVector.push_back(hook);
-    return (hook);
+    std::cout << "[HooksManager::CreateHook]: Successfully hooked " << functionName << std::endl;
+    return (*hook);
 }
 
 Hook HooksManager::GetHookByName(std::string functionName)
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
     {
-        int diff = this->_hookVector[i].GetFunctionName().compare(functionName);
+        int diff = this->_hookVector[i]->GetFunctionName().compare(functionName);
         if (diff == 0)
-            return this->_hookVector[i];
+            return *this->_hookVector[i];
     }
     return Hook();
 }
@@ -160,18 +161,23 @@ Hook HooksManager::GetHookByName(std::string functionName)
 bool HooksManager::EnableAllHooks() // we could use MH_EnableHook(MH_ALL_HOOKS) but it would throw off our tracked enabled state
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
-        this->_hookVector[i].EnableHook(); // this ensures we retain the state of each hook even if some fail to enable
+        this->_hookVector[i]->EnableHook(); // this ensures we retain the state of each hook even if some fail to enable
 }
 
 bool HooksManager::DisableAllHooks()
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
-        this->_hookVector[i].DisableHook();
+        this->_hookVector[i]->DisableHook();
 }
 
 void HooksManager::DestroyAllHooks()
 {
     if (this->_hookVector.size() > 0)
-        while (this->_hookVector.size() > 0)
+    {
+        for (int i = 0; i < this->_hookVector.size(); i++)
+        {
+            delete this->_hookVector[i];
             this->_hookVector.pop_back();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 #include "hooks.h"
 #include "cars.h"
 
+HooksManager HOOKS::hooksManager;
 bool HOOKS::enabled = false;
 bool HOOKS::init = false;
 int HOOKS::carID = 0;
@@ -19,7 +20,6 @@ uintptr_t epic_addr = 0x3B42B0; // Epic
 uintptr_t steam_addr = 0x3B2DF0; // Steam
 
 uintptr_t addr;
-auto OriginalAddress = HOOKS::FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9"); // 0x41 0x8B 0x00
 
 bool IsValidCar(Car* car) 
 {
@@ -62,82 +62,25 @@ __int64 __fastcall hkProcessObject(void* gameContext, void* unknown, void* gameO
 	return fnProcessObject(gameContext, unknown, gameObject);
 }
 
-std::uint8_t* HOOKS::FindPattern(const wchar_t* wszModuleName, const char* szPattern)
-{
-    auto PatternToBytes = [](const char* pattern, std::vector<int>& bytes) {
-        const char* current = pattern;
-        while (*current) {
-            if (*current == ' ') {
-                ++current;
-                continue;
-            }
-            if (*current == '?') {
-                ++current;
-                if (*current == '?') ++current;
-                bytes.push_back(-1);
-            } else {
-                bytes.push_back(strtoul(current, const_cast<char**>(&current), 16));
-            }
-        }
-    };
-
-    HMODULE hModule = GetModuleHandleW(wszModuleName);
-    if (!hModule) return nullptr;
-
-    MODULEINFO modInfo = {};
-    if (!GetModuleInformation(GetCurrentProcess(), hModule, &modInfo, sizeof(MODULEINFO)))
-        return nullptr;
-
-    std::uint8_t* start = reinterpret_cast<std::uint8_t*>(modInfo.lpBaseOfDll);
-    std::size_t size = static_cast<std::size_t>(modInfo.SizeOfImage);
-
-    std::vector<int> patternBytes;
-    PatternToBytes(szPattern, patternBytes);
-    std::size_t patternSize = patternBytes.size();
-
-    for (std::size_t i = 0; i <= size - patternSize; ++i) {
-        bool found = true;
-        for (std::size_t j = 0; j < patternSize; ++j) {
-            if (patternBytes[j] != -1 && start[i + j] != static_cast<std::uint8_t>(patternBytes[j])) {
-                found = false;
-                break;
-            }
-        }
-        if (found) {
-            return &start[i];
-        }
-    }
-    return nullptr;
-}
-
 void HOOKS::SetupHooks()
 {
+	std::uint8_t* OriginalAddress = hooksManager.FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9");
 	if (!steamDll)
 		addr = epic_addr;
 	else
 		addr = steam_addr;
-	if (OriginalAddress == nullptr)
+
+	if (OriginalAddress == nullptr) {
 		std::cerr << "[-] Pattern not found!" << std::endl;
-	std::cout << "[+] MinHook Initialized" << std::endl;
-	std::cout << "[+] Pattern found at: " << OriginalAddress << std::endl;
-	MH_STATUS STATUS = MH_CreateHook(reinterpret_cast<void*>(OriginalAddress), &hkProcessObject, reinterpret_cast<void**>(&fnProcessObject));
-	if (STATUS == MH_OK)
-		std::cout << "[+] Hook Successfully Created" << std::endl;
-	else
-	{
-		printf("[-] Failed To Create Hook\n");
-		Sleep(200);
-		exit(EXIT_FAILURE);
+		return;
 	}
 
-	STATUS = MH_EnableHook(reinterpret_cast<void*>(OriginalAddress));
-	if (STATUS == MH_OK)
-		std::cout << "[+] Hook Successfully Enabled" << std::endl;
-	else
-	{
-		std::cerr << "[-] Failed to enable hooks" << std::endl;
-		Sleep(200);
-		exit(EXIT_FAILURE);
+	Hook& hook = hooksManager.CreateHook(reinterpret_cast<void*>(OriginalAddress), &hkProcessObject, "processObject");
+	hook.EnableHook();
+	fnProcessObject = reinterpret_cast<ProcessObject>(hook.GetStoredFunctionPtr());
+	if (!fnProcessObject) {
+		std::cerr << "[-] Failed to obtain original function pointer" << std::endl;
+		return;
 	}
-    HOOKS::init = true;
+	HOOKS::init = true;
 }

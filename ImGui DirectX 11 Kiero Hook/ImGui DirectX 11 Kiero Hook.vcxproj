@@ -182,6 +182,7 @@
     <ClCompile Include="src\filtered_combo.cpp" />
     <ClCompile Include="src\GUI.cpp" />
     <ClCompile Include="src\hooks.cpp" />
+    <ClCompile Include="src\HooksManager.cpp" />
     <ClCompile Include="src\preset.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +215,7 @@
     <ClInclude Include="src\filtered_combo.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\hooks.h" />
+    <ClInclude Include="src\HooksManager.hpp" />
     <ClInclude Include="src\preset.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,5 +1,5 @@
 #pragma once
-#include "../kiero/minhook/include/Minhook.h"
+#include "HooksManager.hpp"
 #include <Windows.h>
 #include <cstdint>
 #include <vector>
@@ -18,7 +18,7 @@ namespace HOOKS
     extern int decalID;
     extern int antennaID;
     extern int goalExplosionID;
-    std::uint8_t* FindPattern(const wchar_t* wszModuleName, const char* szPattern);
+    extern HooksManager hooksManager;
     void SetupHooks();
 }
 

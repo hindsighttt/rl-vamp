@@ -23,14 +23,14 @@ public:
     void        EnableHook();
     void        DisableHook();
     bool        ToggleHook();
-    LPVOID*     GetStoredFunctionPtr();
+    LPVOID      GetStoredFunctionPtr();
     std::string GetFunctionName();
 private:
     std::string _functionName;
     bool        _state;
     LPVOID      _functionAddr;
     LPVOID      _detourFunctionPtr;
-    LPVOID*     _storedFunctionPtr;
+    LPVOID      _storedFunctionPtr;
 };
 
 class HooksManager
@@ -48,7 +48,7 @@ public:
     bool            DisableAllHooks();
     void            DestroyAllHooks();
 private:
-    std::vector<Hook> _hookVector;
+    std::vector<Hook*> _hookVector;
 };
 
 #endif // !HOOKSMANAGER_HPP
