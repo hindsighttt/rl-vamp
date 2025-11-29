@@ -16,12 +16,15 @@ class Hook
 {
 public:
     Hook(std::string functionName);
+    Hook();
     ~Hook();
 public:
-    bool InitializeHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr);
-    void EnableHook();
-    void DisableHook();
-    bool ToggleHook();
+    bool        InitializeHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr);
+    void        EnableHook();
+    void        DisableHook();
+    bool        ToggleHook();
+    LPVOID*     GetStoredFunctionPtr();
+    std::string GetFunctionName();
 private:
     std::string _functionName;
     bool        _state;
@@ -36,14 +39,14 @@ public:
     HooksManager();
     ~HooksManager();
 public:
-    std::uint8_t* FindPattern(const wchar_t* wszModuleName, const char *szPattern);
-    Hook &CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr, std::string functionName);
-    Hook GetHookByName(std::string functionName);
-    void DestroyHook(std::string functionName); // NOT_IMPLEMENTED
-    void DestroyHook(Hook hook); // NOT_IMPLEMENTED
-    bool EnableAllHooks();
-    bool DisableAllHooks();
-    void DestroyAllHooks();
+    std::uint8_t*   FindPattern(const wchar_t* wszModuleName, const char *szPattern);
+    Hook            &CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr, std::string functionName);
+    Hook            GetHookByName(std::string functionName);
+    void            DestroyHook(std::string functionName); // NOT_IMPLEMENTED
+    void            DestroyHook(Hook hook); // NOT_IMPLEMENTED
+    bool            EnableAllHooks();
+    bool            DisableAllHooks();
+    void            DestroyAllHooks();
 private:
     std::vector<Hook> _hookVector;
 };

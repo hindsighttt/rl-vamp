@@ -9,6 +9,14 @@ Hook::Hook(std::string functionName)
     this->_storedFunctionPtr = nullptr;
 }
 
+Hook::Hook()
+{
+    this->_detourFunctionPtr = nullptr;
+    this->_functionAddr = nullptr;
+    this->_storedFunctionPtr = nullptr;
+    this->_state = false;
+}
+
 Hook::~Hook() // Disables the hook and removes it
 {
     this->DisableHook();
@@ -54,6 +62,16 @@ bool Hook::ToggleHook()
     else
         this->EnableHook();
     return this->_state;
+}
+
+LPVOID* Hook::GetStoredFunctionPtr()
+{
+    return this->_storedFunctionPtr;
+}
+
+std::string Hook::GetFunctionName()
+{
+    return this->_functionName;
 }
 
 HooksManager::HooksManager()
@@ -123,9 +141,20 @@ Hook &HooksManager::CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionP
     Hook hook(functionName);
     bool success = hook.InitializeHook(targetFunctionAddr, detourFunctionPtr);
     if (!success)
-        return;
+        return hook;
     this->_hookVector.push_back(hook);
     return (hook);
+}
+
+Hook HooksManager::GetHookByName(std::string functionName)
+{
+    for (int i = 0; i < this->_hookVector.size(); i++)
+    {
+        int diff = this->_hookVector[i].GetFunctionName().compare(functionName);
+        if (diff == 0)
+            return this->_hookVector[i];
+    }
+    return Hook();
 }
 
 bool HooksManager::EnableAllHooks() // we could use MH_EnableHook(MH_ALL_HOOKS) but it would throw off our tracked enabled state
