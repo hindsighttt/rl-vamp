@@ -1,4 +1,4 @@
-#include "../include/filtered_combo.hpp"
+#include "filtered_combo.h"
 
 bool ImGui::FilteredCombo(const char *label, int *currentItem, std::vector<std::string> data,  int itemsCount, const char *filter)
 {
@@ -24,7 +24,7 @@ bool ImGui::FilteredCombo(const char *label, int *currentItem, std::vector<std::
             filteredList.push_back(data[i].c_str());
     }
 	int currentFilteredItem = 0;
-	if (strlen(filter) <= 0)
+	if (strlen(filter) == 0)
 		currentFilteredItem = *currentItem;
 	int filteredCount = static_cast<int>(filteredList.size());
 	bool status = ImGui::Combo(label, &currentFilteredItem, filteredList.data(), filteredCount);

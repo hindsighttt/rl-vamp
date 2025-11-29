@@ -1,6 +1,7 @@
 #pragma once
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx11.h"
+#include "filtered_combo.h"
 #include "hooks.h"
 
 #include <d3d11.h>

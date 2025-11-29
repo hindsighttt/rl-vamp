@@ -179,6 +179,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RLCHANGER.cpp" />
     <ClCompile Include="src\cars.cpp" />
+    <ClCompile Include="src\filtered_combo.cpp" />
     <ClCompile Include="src\GUI.cpp" />
     <ClCompile Include="src\hooks.cpp" />
     <ClCompile Include="src\preset.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="kiero\minhook\src\trampoline.h" />
     <ClInclude Include="RLCHANGER.h" />
     <ClInclude Include="src\cars.h" />
+    <ClInclude Include="src\filtered_combo.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\hooks.h" />
     <ClInclude Include="src\preset.h" />

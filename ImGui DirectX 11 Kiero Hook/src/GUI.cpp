@@ -74,9 +74,29 @@ void GUI::ApplyStyle()
 	style.Colors[ImGuiCol_TabActive] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
 }
 
+static void AddCombo(const char *label, std::vector<Item> itemVector, int &selectedItem, int &hookID, const char *search)
+{
+	if (strlen(search) > 0)
+	{
+		std::vector<std::string> items;
+		for (int i = 0; i < itemVector.size(); i++)
+			items.push_back(itemVector[i].ingameName);
+		ImGui::FilteredCombo(label, &selectedItem, items, items.size(), search);
+	}
+	else
+	{
+		std::vector<const char *> items;
+		for (int i = 0; i < itemVector.size(); i++)
+			items.push_back(itemVector[i].ingameName.c_str());
+		ImGui::Combo(label, &selectedItem, items.data(), items.size());
+	}
+	hookID = itemVector[selectedItem].ingameID;
+}
+
 void GUI::Render()
 {
 	static std::string presetName = "";
+	static std::string searchTerm = "";
 	static int selectedPresetIndex = 0;
 	static bool previousKeyState = GetAsyncKeyState(VK_DELETE) || GetAsyncKeyState(VK_INSERT);
 
@@ -89,41 +109,13 @@ void GUI::Render()
 	ImGui::Begin("rl-vamp", (bool*)0, ImGuiWindowFlags_NoCollapse);
 	{
 		ImGui::Checkbox("Enabled", &HOOKS::enabled);
-
-		// CARS
-		std::vector<const char*> Caritems;
-		for (int i = 0; i < CARS::CarsList.size(); i++)
-			Caritems.push_back(CARS::CarsList[i].ingameName.c_str());
-		ImGui::Combo("Body", &GUI::selectedCarIndex, Caritems.data(), Caritems.size());
-		HOOKS::carID = CARS::CarsList[GUI::selectedCarIndex].ingameID;
-
-		// Wheels
-		std::vector<const char*> Wheelsitems;
-		for (int i = 0; i < CARS::WheelsList.size(); i++)
-				Wheelsitems.push_back(CARS::WheelsList[i].ingameName.c_str());
-		ImGui::Combo("Wheels", &GUI::selectedWheelsIndex, Wheelsitems.data(), Wheelsitems.size());
-		HOOKS::wheelID = CARS::WheelsList[GUI::selectedWheelsIndex].ingameID;
-
-		// Boost
-		std::vector<const char*> Boostitems;
-		for (int i = 0; i < CARS::BoostsList.size(); i++)
-			Boostitems.push_back(CARS::BoostsList[i].ingameName.c_str());
-		ImGui::Combo("Boost", &GUI::selectedBoostIndex, Boostitems.data(), Boostitems.size());
-		HOOKS::boostID = CARS::BoostsList[GUI::selectedBoostIndex].ingameID;
-
-		// Toppers
-		std::vector<const char*> TopperItems;
-		for (int i = 0; i < CARS::ToppersList.size(); i++)
-			TopperItems.push_back(CARS::ToppersList[i].ingameName.c_str());
-		ImGui::Combo("Topper", &GUI::selectedTopperIndex, TopperItems.data(), TopperItems.size());
-		HOOKS::hatID = CARS::ToppersList[GUI::selectedTopperIndex].ingameID;
-
-		// Antennas
-		std::vector<const char*> AntennaItems;
-		for (int i = 0; i < CARS::AntennasList.size(); i++)
-			AntennaItems.push_back(CARS::AntennasList[i].ingameName.c_str());
-		ImGui::Combo("Antennas", &GUI::selectedAntennaIndex, AntennaItems.data(), AntennaItems.size());
-		HOOKS::antennaID = CARS::AntennasList[GUI::selectedAntennaIndex].ingameID;
+		ImGui::InputText("Search", searchTerm.data(), searchTerm.capacity());
+		ImGui::NewLine();
+		AddCombo("Body", CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID, searchTerm.c_str());
+		AddCombo("Wheels", CARS::WheelsList, GUI::selectedWheelsIndex, HOOKS::wheelID, searchTerm.c_str());
+		AddCombo("Boost", CARS::BoostsList, GUI::selectedBoostIndex, HOOKS::boostID, searchTerm.c_str());
+		AddCombo("Topper", CARS::ToppersList, GUI::selectedTopperIndex, HOOKS::hatID, searchTerm.c_str());
+		AddCombo("Antennas", CARS::AntennasList, GUI::selectedAntennaIndex, HOOKS::antennaID, searchTerm.c_str());
 
 		if (ImGui::Button("Reload Items"))
 		{
