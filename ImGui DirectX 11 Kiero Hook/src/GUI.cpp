@@ -112,10 +112,12 @@ void GUI::Render()
 		ImGui::InputText("Search", searchTerm.data(), searchTerm.capacity());
 		ImGui::NewLine();
 		AddCombo("Body", CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID, searchTerm.c_str());
+		AddCombo("Decal", CARS::DecalsList, GUI::selectedDecalIndex, HOOKS::decalID, searchTerm.c_str());
 		AddCombo("Wheels", CARS::WheelsList, GUI::selectedWheelsIndex, HOOKS::wheelID, searchTerm.c_str());
 		AddCombo("Boost", CARS::BoostsList, GUI::selectedBoostIndex, HOOKS::boostID, searchTerm.c_str());
 		AddCombo("Topper", CARS::ToppersList, GUI::selectedTopperIndex, HOOKS::hatID, searchTerm.c_str());
 		AddCombo("Antennas", CARS::AntennasList, GUI::selectedAntennaIndex, HOOKS::antennaID, searchTerm.c_str());
+		AddCombo("Goal Explosion", CARS::GoalsList, GUI::selectedGoalIndex, HOOKS::goalExplosionID, searchTerm.c_str());
 
 		if (ImGui::Button("Reload Items"))
 		{
@@ -124,12 +126,16 @@ void GUI::Render()
 			CARS::BoostsList.clear();
 			CARS::ToppersList.clear();
 			CARS::AntennasList.clear();
+			CARS::DecalsList.clear();
+			CARS::GoalsList.clear();
 
 			GUI::selectedAntennaIndex = 0;
 			GUI::selectedCarIndex = 0;
 			GUI::selectedWheelsIndex = 0;
 			GUI::selectedBoostIndex = 0;
 			GUI::selectedTopperIndex = 0;
+			GUI::selectedGoalIndex = 0;
+			GUI::selectedDecalIndex = 0;
 			CARS::LoadAllItems("items.csv");
 		}
 

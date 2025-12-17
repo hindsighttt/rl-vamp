@@ -162,12 +162,14 @@ bool HooksManager::EnableAllHooks() // we could use MH_EnableHook(MH_ALL_HOOKS) 
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
         this->_hookVector[i]->EnableHook(); // this ensures we retain the state of each hook even if some fail to enable
+    return true;
 }
 
 bool HooksManager::DisableAllHooks()
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
         this->_hookVector[i]->DisableHook();
+    return true;
 }
 
 void HooksManager::DestroyAllHooks()

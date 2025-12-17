@@ -20,4 +20,6 @@ namespace GUI
 	extern int selectedBoostIndex;
 	extern int selectedTopperIndex;
 	extern int selectedAntennaIndex;
+	extern int selectedGoalIndex;
+	extern int selectedDecalIndex;
 }

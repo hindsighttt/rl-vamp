@@ -57,7 +57,7 @@ void PRESET::SavePreset(std::string presetName, std::vector<Item> itemVector)
 		presetFile << itemVector[i].type << ":" << itemVector[i].ingameID << std::endl;
 	presetFile.close();
 
-	std::cout << "[+] Saved preset: " << presetName << std::endl;
+	std::cout << "[PRESET::SavePreset] Saved preset: " << presetName << std::endl;
 }
 
 void PRESET::LoadPreset(std::string presetName)
@@ -106,6 +106,20 @@ void PRESET::LoadPreset(std::string presetName)
 			itemIndex = FindItemInList(CARS::ToppersList, itemId);
 			if (itemIndex != -1)
 				GUI::selectedTopperIndex = itemIndex;
+		}
+		else if (itemType == "Skin")
+		{
+			HOOKS::decalID = itemId;
+			itemIndex = FindItemInList(CARS::DecalsList, itemId);
+			if (itemIndex != -1)
+				GUI::selectedDecalIndex = itemIndex;
+		}
+		else if (itemType == "GoalExplosion")
+		{
+			HOOKS::goalExplosionID = itemId;
+			itemIndex = FindItemInList(CARS::GoalsList, itemId);
+			if (itemIndex != -1)
+				GUI::selectedGoalIndex = itemIndex;
 		}
 	}
 	presetFile.close();

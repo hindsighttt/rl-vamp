@@ -32,6 +32,8 @@
 
 #if KIERO_USE_MINHOOK
 # include "minhook/include/MinHook.h"
+# include "../src/HooksManager.hpp"
+# include "../src/hooks.h"
 #endif
 
 #ifdef _UNICODE
@@ -685,6 +687,7 @@ kiero::Status::Enum kiero::bind(uint16_t _index, void** _original, void* _functi
 	{
 #if KIERO_USE_MINHOOK
 		void* target = (void*)g_methodsTable[_index];
+		// maybe implement our new hooksmanager
 		if (MH_CreateHook(target, _function, _original) != MH_OK || MH_EnableHook(target) != MH_OK)
 		{
 			return Status::UnknownError;

@@ -71,7 +71,7 @@ void HOOKS::SetupHooks()
 		addr = steam_addr;
 
 	if (OriginalAddress == nullptr) {
-		std::cerr << "[-] Pattern not found!" << std::endl;
+		std::cerr << "[HOOKS::SetupHooks] Pattern not found!" << std::endl;
 		return;
 	}
 
@@ -79,7 +79,7 @@ void HOOKS::SetupHooks()
 	hook.EnableHook();
 	fnProcessObject = reinterpret_cast<ProcessObject>(hook.GetStoredFunctionPtr());
 	if (!fnProcessObject) {
-		std::cerr << "[-] Failed to obtain original function pointer" << std::endl;
+		std::cerr << "[HOOKS::SetupHooks] Failed to obtain original function pointer" << std::endl;
 		return;
 	}
 	HOOKS::init = true;

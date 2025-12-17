@@ -6,6 +6,7 @@ std::vector<Item> CARS::BoostsList;
 std::vector<Item> CARS::AntennasList;
 std::vector<Item> CARS::ToppersList;
 std::vector<Item> CARS::GoalsList;
+std::vector<Item> CARS::DecalsList;
 std::vector<Item> CARS::ItemList;
 std::vector<int> CARS::ValidCars;
 std::vector<int> CARS::ValidWheels;
@@ -15,7 +16,7 @@ void CARS::LoadAllItems(std::string file_path)
    std::ifstream file(file_path);  
    if (!file.is_open())   
    {  
-       std::cerr << "[-] Failed to open file: " << file_path << std::endl;  
+       std::cerr << "[CARS::LoadAllItems] Failed to open file: " << file_path << std::endl;  
        return;  
    }  
 
@@ -28,6 +29,7 @@ void CARS::LoadAllItems(std::string file_path)
    AntennasList.push_back(NoneItem);
    ToppersList.push_back(NoneItem);
    GoalsList.push_back(NoneItem);
+   DecalsList.push_back(NoneItem);
  
    std::vector<std::pair<std::string, int>> cars;  
    std::string line;  
@@ -46,51 +48,24 @@ void CARS::LoadAllItems(std::string file_path)
  
 	   if (type == "Body")
 	   {
-		   Item current_item;
-		   current_item.ingameID = std::atoi(id_str.c_str());
-		   current_item.type = type;
-		   current_item.ingameName = name;
-
 		   CARS::CarsList.push_back(current_item);
 		   CARS::ValidCars.push_back(std::atoi(id_str.c_str()));
 	   }
 	   else if (type == "Wheels")
 	   {
-		   Item current_item;
-		   current_item.ingameID = std::atoi(id_str.c_str());
-		   current_item.type = type;
-		   current_item.ingameName = name;
-
 		   CARS::WheelsList.push_back(current_item);
 		   CARS::ValidWheels.push_back(std::atoi(id_str.c_str()));
 	   }
 	   else if (type == "Boost")
-	   {
-		   Item current_item;
-		   current_item.ingameID = std::atoi(id_str.c_str());
-		   current_item.type = type;
-		   current_item.ingameName = name;
-
 		   CARS::BoostsList.push_back(current_item);
-	   }
 	   else if (type == "Antenna")
-	   {
-		   Item current_item;
-		   current_item.ingameID = std::atoi(id_str.c_str());
-		   current_item.type = type;
-		   current_item.ingameName = name;
-
 		   CARS::AntennasList.push_back(current_item);
-	   }
 	   else if (type == "Hat")
-	   {
-		   Item current_item;
-		   current_item.ingameID = std::atoi(id_str.c_str());
-		   current_item.type = type;
-		   current_item.ingameName = name;
-
 		   CARS::ToppersList.push_back(current_item);
-	   }
+	   else if (type == "Skin")
+		   CARS::DecalsList.push_back(current_item);
+	   else if (type == "GoalExplosion")
+		   CARS::GoalsList.push_back(current_item);
 	   //std::cout << "[+] Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
    }  
    file.close();
@@ -100,5 +75,4 @@ void CARS::LoadAllItems(std::string file_path)
 	   + CARS::AntennasList.size()
 	   + CARS::ToppersList.size()
 	   << " items" << std::endl;
-
 }

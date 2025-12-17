@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-struct Item
+typedef struct Item
 {
 	unsigned int ingameID;
 	std::string type;
@@ -23,6 +23,7 @@ namespace CARS
 	extern std::vector<Item> AntennasList;
 	extern std::vector<Item> ToppersList;
 	extern std::vector<Item> GoalsList;
+	extern std::vector<Item> DecalsList;
 
 	extern std::vector<int> ValidCars;
 	extern std::vector<int> ValidWheels;
