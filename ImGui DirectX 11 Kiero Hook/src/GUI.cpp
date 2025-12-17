@@ -9,6 +9,8 @@ int GUI::selectedWheelsIndex = 0;
 int GUI::selectedBoostIndex = 0;
 int GUI::selectedTopperIndex = 0;
 int GUI::selectedAntennaIndex = 0;
+int GUI::selectedGoalIndex = 0;
+int GUI::selectedDecalIndex = 0;
 
 void GUI::ApplyStyle()
 {
@@ -176,7 +178,30 @@ void GUI::Render()
 
 		ImGui::NewLine();
 		ImGui::Text("Press \"DELETE\" to hide the menu");
-		ImGui::Text("Warning: Disabling the plugin in bakkesmod will close the game");
 	}
 	ImGui::End();
+}
+
+void GUI::StartupAnimation(bool &startupAnimation)
+{
+	double currentTime = ImGui::GetTime();
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	ImGuiIO io = ImGui::GetIO();
+	float maxTime = 3.0; // in seconds
+	int currentBrightness = 175;
+	int currentTextBrightness = 255;
+
+	currentBrightness = std::lerp(currentBrightness, 0, currentTime / maxTime);
+	currentTextBrightness = std::lerp(currentTextBrightness, 0, currentTime / maxTime);
+
+	drawList->AddRectFilled(ImVec2(0, 0), io.DisplaySize, ImColor(0, 0, 0, currentBrightness));
+	drawList->AddText(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2), ImColor(255, 255, 255, currentTextBrightness), "RL-VAMP IS LOADING");
+
+	int barHeight = 10;
+	int barLength = io.DisplaySize.x;
+	barLength = std::lerp(0, barLength, currentTime / maxTime);
+	drawList->AddRectFilled(ImVec2(0, 0), ImVec2(barLength, barHeight), ImColor(49, 124, 245, 255));
+
+	if (currentTime > maxTime)
+		startupAnimation = true;
 }

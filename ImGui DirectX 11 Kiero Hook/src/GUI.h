@@ -14,6 +14,7 @@ namespace GUI
 {
 	void ApplyStyle();
 	void Render();
+	void StartupAnimation(bool &startupAnimation);
 
 	extern int selectedCarIndex;
 	extern int selectedWheelsIndex;
