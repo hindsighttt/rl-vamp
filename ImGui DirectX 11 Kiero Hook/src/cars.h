@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include "net.h"
 
 typedef struct Item
 {

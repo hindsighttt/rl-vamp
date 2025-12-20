@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ImGui DirectX 11 Kiero Hook/x64/Debug
+/ImGui DirectX 11 Kiero Hook/x64/Release
+/ImGui DirectX 11 Kiero Hook/.vscode
+/.vs/RLCHANGER
+/ImGui DirectX 11 Kiero Hook/build

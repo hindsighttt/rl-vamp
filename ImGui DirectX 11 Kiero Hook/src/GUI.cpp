@@ -188,14 +188,14 @@ void GUI::StartupAnimation(bool &startupAnimation)
 	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 	ImGuiIO io = ImGui::GetIO();
 	float maxTime = 3.0; // in seconds
-	int currentBrightness = 175;
-	int currentTextBrightness = 255;
+	int backgroundBrightness = 175;
+	int textBrightness = 255;
 
-	currentBrightness = std::lerp(currentBrightness, 0, currentTime / maxTime);
-	currentTextBrightness = std::lerp(currentTextBrightness, 0, currentTime / maxTime);
+	backgroundBrightness = std::lerp(backgroundBrightness, 0, currentTime / maxTime);
+	textBrightness = std::lerp(textBrightness, 0, currentTime / maxTime);
 
-	drawList->AddRectFilled(ImVec2(0, 0), io.DisplaySize, ImColor(0, 0, 0, currentBrightness));
-	drawList->AddText(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2), ImColor(255, 255, 255, currentTextBrightness), "RL-VAMP IS LOADING");
+	drawList->AddRectFilled(ImVec2(0, 0), io.DisplaySize, ImColor(0, 0, 0, backgroundBrightness));
+	drawList->AddText(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2), ImColor(255, 255, 255, textBrightness), "RL-VAMP IS LOADING");
 
 	int barHeight = 10;
 	int barLength = io.DisplaySize.x;
