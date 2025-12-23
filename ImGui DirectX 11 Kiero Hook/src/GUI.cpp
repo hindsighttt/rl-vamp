@@ -95,6 +95,49 @@ static void AddCombo(const char *label, std::vector<Item> itemVector, int &selec
 	hookID = itemVector[selectedItem].ingameID;
 }
 
+static ImVec2 AddVec2(ImVec2 source, ImVec2 add) {
+	return (ImVec2(source.x + add.x, source.y + add.y));
+}
+
+static ImVec2 SubtractFloatFromVec2(ImVec2 vector, float sub) {
+	ImVec2 result = vector;
+
+	result.x -= sub;
+	result.y -= sub;
+	return (result);
+}
+
+static ImVec2 AddFloatToVec2(ImVec2 vector, float add) {
+	ImVec2 result = vector;
+
+	result.x += add;
+	result.y += add;
+	return (result);
+}
+
+static void DrawGlowingBackground(float borderSize) {
+	ImGuiStyle &style = ImGui::GetStyle();
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	ImVec2 windowPosition = ImGui::GetWindowPos();
+	ImVec2 windowSize = ImGui::GetWindowSize();
+
+	int maxValue = 255;
+	int minValue = 0;
+	float duration = 2.0f;
+
+	float currentTime = (float)ImGui::GetTime();
+	float moduloTime = fmod(currentTime, duration);
+	int cycles = floor(currentTime / duration);
+	bool direction = (cycles % 2) == 1;
+
+	int brightness;
+	if (direction)
+		brightness = (int)std::lerp(minValue, maxValue, moduloTime / duration);
+	else
+		brightness = (int)std::lerp(maxValue, minValue, moduloTime / duration);
+	drawList->AddRectFilled(SubtractFloatFromVec2(windowPosition, borderSize), AddFloatToVec2(AddVec2(windowPosition, windowSize), borderSize), ImColor(49, 124, 245, brightness), style.WindowRounding);
+}
+
 void GUI::Render()
 {
 	static std::string presetName = "";
@@ -179,6 +222,7 @@ void GUI::Render()
 		ImGui::NewLine();
 		ImGui::Text("Press \"DELETE\" to hide the menu");
 	}
+	DrawGlowingBackground(2.0f);
 	ImGui::End();
 }
 
