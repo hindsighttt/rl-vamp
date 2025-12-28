@@ -1,6 +1,10 @@
 #pragma once
 
 #include "bakkesmod/plugin/bakkesmodplugin.h"
+#include <iostream>
+#include <Windows.h>
+#include "lib/kiero/kiero.h"
+#include "src/game/hooks.h"
 
 #pragma comment( lib, "pluginsdk.lib")
 

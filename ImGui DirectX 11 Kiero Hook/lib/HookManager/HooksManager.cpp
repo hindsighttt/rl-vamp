@@ -83,6 +83,7 @@ HooksManager::HooksManager()
 HooksManager::~HooksManager()
 {
     this->DestroyAllHooks();
+    std::cout << "[HooksManager::~HooksManager]: Destroyed HooksManager" << std::endl;
 }
 
 std::uint8_t *HooksManager::FindPattern(const wchar_t *wszModuleName, const char *szPattern)
@@ -178,6 +179,7 @@ void HooksManager::DestroyAllHooks()
     {
         for (int i = 0; i < this->_hookVector.size(); i++)
         {
+            std::cout << "[HooksManager::DestroyAllHooks]: Destroying " << this->_hookVector[i]->GetFunctionName() << " hook" << std::endl;
             delete this->_hookVector[i];
             this->_hookVector.pop_back();
         }

@@ -1,6 +1,3 @@
-#include <windows.h>
-#include <iostream>
-#include <filesystem>
 #include "includes.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -99,14 +96,20 @@ BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hMod);
 		CreateThread(nullptr, 0, MainThread, hMod, 0, nullptr);
+		#if defined _DEBUG
 			FILE* placeholder;
 			AllocConsole();
 			freopen_s(&placeholder, "CONOUT$", "w", stdout);
-			std::cout << "[+] Running in " << std::filesystem::current_path() << std::endl;
+			std::cout << "[+] Running in " << std::filesystem::current_path().generic_string() << std::endl;
 			std::cout << "[+] Process ID: " << GetCurrentProcessId() << std::endl << std::endl;
+		#endif
 		break;
 	case DLL_PROCESS_DETACH:
 		kiero::shutdown();
+		delete HOOKS::hooksManager;
+		#if defined _DEBUG
+			FreeConsole();
+		#endif
 		break;
 	}
 	return TRUE;

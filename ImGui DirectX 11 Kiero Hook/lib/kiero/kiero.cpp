@@ -32,8 +32,8 @@
 
 #if KIERO_USE_MINHOOK
 # include "minhook/include/MinHook.h"
-# include "../src/HooksManager.hpp"
-# include "../src/hooks.h"
+# include "../HookManager/HooksManager.hpp"
+# include "../../src/game/hooks.h"
 #endif
 
 #ifdef _UNICODE
