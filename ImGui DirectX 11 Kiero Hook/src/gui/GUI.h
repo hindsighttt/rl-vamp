@@ -13,12 +13,20 @@
 #include <string>
 #include <iostream>
 
+typedef struct {
+	std::string title;
+	std::string message;
+	float duration;
+	float startTime;
+} Notification;
 
 namespace GUI
 {
 	void ApplyStyle();
 	void Render();
 	void StartupAnimation(bool &startupAnimation);
+	void DrawNotification(std::vector<Notification>& notifications);
+	void AddNotification(std::string title, std::string message, float duration, std::vector<Notification>& notifications);
 
 	extern int selectedCarIndex;
 	extern int selectedWheelsIndex;
@@ -28,4 +36,5 @@ namespace GUI
 	extern int selectedGoalIndex;
 	extern int selectedDecalIndex;
 	extern float statusBarHeight;
+	extern std::vector<Notification> notifications;
 }

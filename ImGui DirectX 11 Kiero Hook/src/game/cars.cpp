@@ -11,7 +11,7 @@ std::vector<Item> CARS::ItemList;
 std::vector<int> CARS::ValidCars;
 std::vector<int> CARS::ValidWheels;
 
-void CARS::LoadAllItems(std::string file_path)
+void CARS::LoadAllItemsFromFile(std::string file_path)
 {
 	NetworkManager tempCurl;
 	tempCurl.DownloadTextFile("https://github.com/hindsighttt/rl-vamp/raw/refs/heads/main/res/items.csv", "items.csv");
@@ -19,7 +19,7 @@ void CARS::LoadAllItems(std::string file_path)
 	std::ifstream file(file_path);
 	if (!file.is_open())   
 	{  
-		std::cerr << "[CARS::LoadAllItems] Failed to open file: " << file_path << std::endl;  
+		std::cerr << "[CARS::LoadAllItems]: Failed to open file: " << file_path << std::endl;  
 		return;  
 	}  
 
@@ -72,10 +72,12 @@ void CARS::LoadAllItems(std::string file_path)
 		//std::cout << "[+] Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
 	}  
 	file.close();
-	std::cout << "[+] Loaded " << CARS::CarsList.size()
+	std::cout << "[CARS::LoadAllItemsFromFile]: Loaded " << CARS::CarsList.size()
 		+ CARS::WheelsList.size()
 		+ CARS::BoostsList.size()
 		+ CARS::AntennasList.size()
 		+ CARS::ToppersList.size()
+		+ CARS::GoalsList.size()
+		+ CARS::DecalsList.size()
 		<< " items" << std::endl;
 }

@@ -45,7 +45,7 @@ void PRESET::FindExistingPresets()
 		PRESET::presetList.push_back(name);
 		i++;
 	}
-	std::cout << "[+] Found " << i << " presets" << std::endl;
+	std::cout << "[PRESET::FindExistingPresets]: Found " << i << " presets" << std::endl;
 }
 
 void PRESET::SavePreset(std::string presetName, std::vector<Item> itemVector)
@@ -57,7 +57,7 @@ void PRESET::SavePreset(std::string presetName, std::vector<Item> itemVector)
 		presetFile << itemVector[i].type << ":" << itemVector[i].ingameID << std::endl;
 	presetFile.close();
 
-	std::cout << "[PRESET::SavePreset] Saved preset: " << presetName << std::endl;
+	std::cout << "[PRESET::SavePreset]: Saved preset: " << presetName << std::endl;
 }
 
 void PRESET::LoadPreset(std::string presetName)
@@ -123,5 +123,5 @@ void PRESET::LoadPreset(std::string presetName)
 		}
 	}
 	presetFile.close();
-	std::cout << "[+] Loaded preset: " << presetName << std::endl;
+	std::cout << "[PRESET::LoadPreset]: Loaded preset: " << presetName << std::endl;
 }

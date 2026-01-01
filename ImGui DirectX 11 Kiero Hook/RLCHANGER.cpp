@@ -2,9 +2,11 @@
 
 BAKKESMOD_PLUGIN(RLCHANGER, "RLCHANGER", "1.0", PERMISSION_ALL)
 
+bool bakkesmodLoaded = false;
+
 void RLCHANGER::onLoad() // Function TAGame.ProductLoader_TA.HandleAssetLoaded  
 {
-
+	bakkesmodLoaded = true;
 }
 
 void RLCHANGER::onUnload()

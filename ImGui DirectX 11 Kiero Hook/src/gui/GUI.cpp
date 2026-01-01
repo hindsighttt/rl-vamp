@@ -9,6 +9,7 @@ int GUI::selectedAntennaIndex = 0;
 int GUI::selectedGoalIndex = 0;
 int GUI::selectedDecalIndex = 0;
 float GUI::statusBarHeight = 10.0f;
+std::vector<Notification> GUI::notifications;
 
 void GUI::ApplyStyle()
 {
@@ -83,14 +84,20 @@ static void AddCombo(const char *label, std::vector<Item> itemVector, int &selec
 		std::vector<std::string> items;
 		for (int i = 0; i < itemVector.size(); i++)
 			items.push_back(itemVector[i].ingameName);
-		ImGui::FilteredCombo(label, &selectedItem, items, items.size(), search);
+		if (ImGui::FilteredCombo(label, &selectedItem, items, items.size(), search)) {
+			std::string title = label; title.append(" updated");
+			GUI::AddNotification(title, items[selectedItem], 4.0f, GUI::notifications);
+		}
 	}
 	else
 	{
 		std::vector<const char *> items;
 		for (int i = 0; i < itemVector.size(); i++)
 			items.push_back(itemVector[i].ingameName.c_str());
-		ImGui::Combo(label, &selectedItem, items.data(), items.size());
+		if (ImGui::Combo(label, &selectedItem, items.data(), items.size())) {
+			std::string title = label; title.append(" updated");
+			GUI::AddNotification(title, items[selectedItem], 4.0f, GUI::notifications);
+		}
 	}
 	hookID = itemVector[selectedItem].ingameID;
 }
@@ -186,6 +193,12 @@ static void DrawBackground(bool separator) {
 
 void GUI::Render()
 {
+	//Notification notification{ "Item updated",
+	//						"items[selectedItem]",
+	//						2.0f,
+	//						ImGui::GetTime() };
+	//GUI::notifications.push_back(notification);
+
 	static std::string presetName = "";
 	static std::string searchTerm = "";
 	static int selectedPresetIndex = 0;
@@ -194,6 +207,8 @@ void GUI::Render()
 	if (!previousKeyState && (GetAsyncKeyState(VK_DELETE) || GetAsyncKeyState(VK_INSERT)))
 		state = !state;
 	previousKeyState = GetAsyncKeyState(VK_DELETE) || GetAsyncKeyState(VK_INSERT);
+
+	GUI::DrawNotification(GUI::notifications);
 
 	if (!state)
 		return;
@@ -206,7 +221,12 @@ void GUI::Render()
 				| ImGuiWindowFlags_NoScrollbar
 			);
 	{
-		ImGui::Checkbox("Enabled", &HOOKS::enabled);
+		if (ImGui::Checkbox("Enabled", &HOOKS::enabled)) {
+			std::string status = "Disabled";
+			if (HOOKS::enabled)
+				status = "Enabled";
+			GUI::AddNotification("Status changed", status, 1.0f, GUI::notifications);
+		}
 		ImGui::InputText("Search", searchTerm.data(), searchTerm.capacity());
 		ImGui::NewLine();
 		AddCombo("Body", CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID, searchTerm.c_str());
@@ -226,6 +246,8 @@ void GUI::Render()
 			CARS::AntennasList.clear();
 			CARS::DecalsList.clear();
 			CARS::GoalsList.clear();
+			CARS::ValidCars.clear();
+			CARS::ValidWheels.clear();
 
 			GUI::selectedAntennaIndex = 0;
 			GUI::selectedCarIndex = 0;
@@ -234,7 +256,16 @@ void GUI::Render()
 			GUI::selectedTopperIndex = 0;
 			GUI::selectedGoalIndex = 0;
 			GUI::selectedDecalIndex = 0;
-			CARS::LoadAllItems("items.csv");
+			CARS::LoadAllItemsFromFile("items.csv");
+			int itemCount =	CARS::CarsList.size()
+							+ CARS::WheelsList.size()
+							+ CARS::BoostsList.size()
+							+ CARS::ToppersList.size()
+							+ CARS::AntennasList.size()
+							+ CARS::DecalsList.size()
+							+ CARS::GoalsList.size();
+			std::string message = std::to_string(itemCount) + " items found";
+			GUI::AddNotification("Reload items", message, 3.0f, GUI::notifications);
 		}
 
 		ImGui::NewLine();
@@ -300,6 +331,56 @@ void GUI::StartupAnimation(bool &startupAnimation)
 	barLength = std::lerp(0, barLength, currentTime / maxTime);
 	drawList->AddRectFilled(ImVec2(0, 0), ImVec2(barLength, barHeight), ImColor(49, 124, 245, 255));
 
-	if (currentTime > maxTime)
+	if (currentTime > maxTime) {
 		startupAnimation = true;
+		GUI::AddNotification("rl-vamp", "rl-vamp is succesfully loaded", 5.0f, GUI::notifications);
+	}
+}
+
+void GUI::DrawNotification(std::vector<Notification>& notifications)
+{
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+	ImGuiStyle& style = ImGui::GetStyle();
+	float currentTime = ImGui::GetTime();
+
+	// remove expired ones
+	std::erase_if(notifications, [currentTime](const Notification& notification) {
+		return currentTime > (notification.startTime + notification.duration);
+	});
+
+	for (int i = 0; i < notifications.size(); i++) {
+		// background
+		if (!notifications[i].startTime)
+			notifications[i].startTime = ImGui::GetTime();
+		ImVec2 startPosition = style.FramePadding;
+		startPosition = AddVec2(startPosition, ImVec2(0, (100 + style.FramePadding.y) * i));
+		ImVec2 size = AddVec2(startPosition, ImVec2(250, 100));
+		drawList->AddRectFilled(startPosition, size, ImColor(style.Colors[ImGuiCol_WindowBg]), style.WindowRounding);
+
+		// title bar
+		ImVec2 titleBarSize = AddVec2(startPosition, ImVec2(250, 20));
+		drawList->AddRectFilled(startPosition, titleBarSize, ImColor(style.Colors[ImGuiCol_TitleBgActive]));
+
+		// title text
+		ImVec2 titleSize = ImGui::CalcTextSize(notifications[i].title.c_str());
+		ImVec2 titlePosition = AddVec2(startPosition, ImVec2(style.FramePadding.x, titleSize.y / 2 - style.FramePadding.y / 2));
+		drawList->AddText(titlePosition, ImColor(style.Colors[ImGuiCol_Text]), notifications[i].title.c_str());
+
+		// message
+		ImVec2 messagePosition = ImVec2(startPosition.x + style.FramePadding.x, titleBarSize.y + style.FramePadding.y);
+		drawList->AddText(messagePosition, ImColor(style.Colors[ImGuiCol_Text]), notifications[i].message.c_str());
+
+		// bar
+		ImVec2 barPosition = ImVec2(startPosition.x, size.y);
+		ImVec2 barSize = ImVec2(size.x, size.y - 5);
+		float elapsedTime = currentTime - notifications[i].startTime;
+		barSize.x = std::lerp(barPosition.x, size.x, elapsedTime / notifications[i].duration);
+		drawList->AddRectFilled(barPosition, barSize, ImColor(49, 124, 245, 255));
+	}
+}
+
+void GUI::AddNotification(std::string title, std::string message, float duration, std::vector<Notification>& notifications) {
+	Notification notification = { title, message, duration, ImGui::GetTime() };
+	notifications.push_back(notification);
 }

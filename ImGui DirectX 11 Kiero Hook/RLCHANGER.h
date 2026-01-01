@@ -8,6 +8,8 @@
 
 #pragma comment( lib, "pluginsdk.lib")
 
+extern bool bakkesmodLoaded;
+
 class RLCHANGER : public BakkesMod::Plugin::BakkesModPlugin
 {
 public:

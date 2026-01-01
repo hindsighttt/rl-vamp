@@ -49,7 +49,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 				HOOKS::SetupHooks();
 
 			std::cout << std::endl;
-			CARS::LoadAllItems("items.csv");
+			CARS::LoadAllItemsFromFile("items.csv");
 			PRESET::FindExistingPresets();
 			init = true;
 		}
