@@ -11,18 +11,7 @@ std::vector<Item> CARS::ItemList;
 std::vector<int> CARS::ValidCars;
 std::vector<int> CARS::ValidWheels;
 
-void CARS::LoadAllItemsFromFile(std::string file_path)
-{
-	NetworkManager tempCurl;
-	tempCurl.DownloadTextFile("https://github.com/hindsighttt/rl-vamp/raw/refs/heads/main/res/items.csv", "items.csv");
-
-	std::ifstream file(file_path);
-	if (!file.is_open())   
-	{  
-		std::cerr << "[CARS::LoadAllItems]: Failed to open file: " << file_path << std::endl;  
-		return;  
-	}  
-
+void CARS::FillWithNULLValues() {
 	Item NoneItem;
 	NoneItem.ingameID = 0;
 	NoneItem.ingameName = "None";
@@ -33,6 +22,22 @@ void CARS::LoadAllItemsFromFile(std::string file_path)
 	ToppersList.push_back(NoneItem);
 	GoalsList.push_back(NoneItem);
 	DecalsList.push_back(NoneItem);
+}
+
+void CARS::LoadAllItemsFromFile(std::string file_path)
+{
+	NetworkManager tempCurl;
+
+	tempCurl.DownloadTextFile("https://github.com/hindsighttt/rl-vamp/raw/refs/heads/main/res/items.csv", "items.csv");
+
+	std::ifstream file(file_path);
+	if (!file.is_open())   
+	{  
+		std::cerr << "[CARS::LoadAllItems]: Failed to open file: " << file_path << std::endl;  
+		return;  
+	}
+
+	CARS::FillWithNULLValues();
  
 	std::vector<std::pair<std::string, int>> cars;  
 	std::string line;  

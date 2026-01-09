@@ -60,6 +60,13 @@ void PRESET::SavePreset(std::string presetName, std::vector<Item> itemVector)
 	std::cout << "[PRESET::SavePreset]: Saved preset: " << presetName << std::endl;
 }
 
+static void LoadParsedItem(const unsigned int itemID, std::vector<Item> &itemList, int &guiStorage, int& hookStorage) {
+	hookStorage = itemID;
+	int itemIndex = FindItemInList(itemList, itemID);
+	if (itemIndex != -1)
+		guiStorage = itemIndex;
+}
+
 void PRESET::LoadPreset(std::string presetName)
 {
 	std::ifstream presetFile(presetName);
@@ -73,54 +80,19 @@ void PRESET::LoadPreset(std::string presetName)
 
 		int itemIndex;
 		if (itemType == "Body")
-		{
-			HOOKS::carID = itemId;
-			itemIndex = FindItemInList(CARS::CarsList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedCarIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID);
 		else if (itemType == "Wheels")
-		{
-			HOOKS::wheelID = itemId;
-			itemIndex = FindItemInList(CARS::WheelsList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedWheelsIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::WheelsList, GUI::selectedWheelsIndex, HOOKS::wheelID);
 		else if (itemType == "Boost")
-		{
-			HOOKS::boostID = itemId;
-			itemIndex = FindItemInList(CARS::BoostsList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedBoostIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::BoostsList, GUI::selectedBoostIndex, HOOKS::boostID);
 		else if (itemType == "Antenna")
-		{
-			HOOKS::antennaID = itemId;
-			itemIndex = FindItemInList(CARS::AntennasList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedAntennaIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::AntennasList, GUI::selectedAntennaIndex, HOOKS::antennaID);
 		else if (itemType == "Hat")
-		{
-			HOOKS::hatID = itemId;
-			itemIndex = FindItemInList(CARS::ToppersList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedTopperIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::ToppersList, GUI::selectedTopperIndex, HOOKS::hatID);
 		else if (itemType == "Skin")
-		{
-			HOOKS::decalID = itemId;
-			itemIndex = FindItemInList(CARS::DecalsList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedDecalIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::DecalsList, GUI::selectedDecalIndex, HOOKS::decalID);
 		else if (itemType == "GoalExplosion")
-		{
-			HOOKS::goalExplosionID = itemId;
-			itemIndex = FindItemInList(CARS::GoalsList, itemId);
-			if (itemIndex != -1)
-				GUI::selectedGoalIndex = itemIndex;
-		}
+			LoadParsedItem(itemId, CARS::GoalsList, GUI::selectedGoalIndex, HOOKS::goalExplosionID);
 	}
 	presetFile.close();
 	std::cout << "[PRESET::LoadPreset]: Loaded preset: " << presetName << std::endl;

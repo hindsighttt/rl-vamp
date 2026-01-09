@@ -28,6 +28,15 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 bool init = false;
 bool startupAnimation = false;
+
+DWORD WINAPI LoadAllItemsThreaded(LPVOID ThreadParameters) { // not properly handling race conditions yet, even tho it shoudln't be an issue here
+	CARS::LoadAllItemsFromFile("items.csv");
+	std::cout << "[LoadAllItemsThreaded]: Finished downloading all the items" << std::endl;
+	startupAnimation = true;
+	GUI::AddNotification("rl-vamp", "rl-vamp is succesfully loaded", 5.0f, GUI::notifications);
+	return 0;
+}
+
 HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 {
 	if (!init)
@@ -49,7 +58,10 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 				HOOKS::SetupHooks();
 
 			std::cout << std::endl;
-			CARS::LoadAllItemsFromFile("items.csv");
+			CARS::FillWithNULLValues(); // prevents a crash from when the items are empty in the gui
+			HANDLE loadItemsThread = CreateThread(NULL, 0, LoadAllItemsThreaded, NULL, 0, NULL);
+			//if (!loadItemsThread)
+			//	CARS::LoadAllItemsFromFile("items.csv"); // fallback to regular method
 			PRESET::FindExistingPresets();
 			init = true;
 		}
@@ -100,8 +112,8 @@ BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
 			FILE* placeholder;
 			AllocConsole();
 			freopen_s(&placeholder, "CONOUT$", "w", stdout);
-			std::cout << "[+] Running in " << std::filesystem::current_path().generic_string() << std::endl;
-			std::cout << "[+] Process ID: " << GetCurrentProcessId() << std::endl << std::endl;
+			std::cout << "[DllMain]: Running in " << std::filesystem::current_path().generic_string() << std::endl;
+			std::cout << "[DllMain]: Process ID: " << GetCurrentProcessId() << std::endl << std::endl;
 		#endif
 		break;
 	case DLL_PROCESS_DETACH:

@@ -193,12 +193,6 @@ static void DrawBackground(bool separator) {
 
 void GUI::Render()
 {
-	//Notification notification{ "Item updated",
-	//						"items[selectedItem]",
-	//						2.0f,
-	//						ImGui::GetTime() };
-	//GUI::notifications.push_back(notification);
-
 	static std::string presetName = "";
 	static std::string searchTerm = "";
 	static int selectedPresetIndex = 0;
@@ -276,8 +270,7 @@ void GUI::Render()
 			presetName = PRESET::presetList[selectedPresetIndex];
 
 		ImGui::InputText("Preset", presetName.data(), MAX_PATH);
-		if (ImGui::Button("Save"))
-		{
+		if (ImGui::Button("Save")) {
 			std::vector<Item> itemList = { 
 				CARS::CarsList[GUI::selectedCarIndex], 
 				CARS::WheelsList[GUI::selectedWheelsIndex],
@@ -292,15 +285,16 @@ void GUI::Render()
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Load"))
-		{
 			PRESET::LoadPreset(presetName);
-		}
 		ImGui::SameLine();
-		if (ImGui::Button("Delete"))
-		{
+		if (ImGui::Button("Delete")) {
 			remove(presetName.c_str());
 			PRESET::presetList.clear();
 			PRESET::FindExistingPresets();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Open Folder")) {
+			system("explorer.exe .");
 		}
 
 		ImGui::NewLine();
@@ -321,7 +315,7 @@ void GUI::StartupAnimation(bool &startupAnimation)
 	int textBrightness = 255;
 
 	backgroundBrightness = std::lerp(backgroundBrightness, 0, currentTime / maxTime);
-	textBrightness = std::lerp(textBrightness, 0, currentTime / maxTime);
+	textBrightness = std::lerp(textBrightness, 20, currentTime / maxTime);
 
 	drawList->AddRectFilled(ImVec2(0, 0), io.DisplaySize, ImColor(0, 0, 0, backgroundBrightness));
 	drawList->AddText(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2), ImColor(255, 255, 255, textBrightness), "RL-VAMP IS LOADING");
@@ -331,10 +325,12 @@ void GUI::StartupAnimation(bool &startupAnimation)
 	barLength = std::lerp(0, barLength, currentTime / maxTime);
 	drawList->AddRectFilled(ImVec2(0, 0), ImVec2(barLength, barHeight), ImColor(49, 124, 245, 255));
 
+	/* // Now Handled by the thread
 	if (currentTime > maxTime) {
 		startupAnimation = true;
 		GUI::AddNotification("rl-vamp", "rl-vamp is succesfully loaded", 5.0f, GUI::notifications);
 	}
+	*/
 }
 
 void GUI::DrawNotification(std::vector<Notification>& notifications)

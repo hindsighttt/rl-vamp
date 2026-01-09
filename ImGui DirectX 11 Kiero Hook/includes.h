@@ -13,6 +13,7 @@
 #include "src/game/cars.h"
 #include "src/gui/GUI.h"
 #include "src/misc/preset.h"
+#include "RLCHANGER.h"
 
 typedef HRESULT(__stdcall* Present) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);

@@ -29,6 +29,7 @@ namespace CARS
 	extern std::vector<int> ValidCars;
 	extern std::vector<int> ValidWheels;
 	void LoadAllItemsFromFile(std::string file_path);
+	void FillWithNULLValues();
 }
 
 #endif CARS_H
