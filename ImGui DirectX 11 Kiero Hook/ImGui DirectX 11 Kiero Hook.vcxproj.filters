@@ -87,6 +87,9 @@
     <ClCompile Include="src\gui\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\networking\nethooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="lib\kiero\minhook\dll_resources\MinHook.rc">
@@ -173,6 +176,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gui\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\networking\nethooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

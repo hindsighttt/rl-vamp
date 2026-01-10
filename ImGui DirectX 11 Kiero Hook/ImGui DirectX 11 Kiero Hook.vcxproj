@@ -202,6 +202,7 @@
     <ClCompile Include="src\gui\Renderer.cpp" />
     <ClCompile Include="src\networking\net.cpp" />
     <ClCompile Include="src\misc\preset.cpp" />
+    <ClCompile Include="src\networking\nethooks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\kiero\minhook\dll_resources\MinHook.def" />
@@ -237,6 +238,7 @@
     <ClInclude Include="src\gui\Renderer.h" />
     <ClInclude Include="src\networking\net.h" />
     <ClInclude Include="src\misc\preset.h" />
+    <ClInclude Include="src\networking\nethooks.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

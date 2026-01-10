@@ -214,21 +214,21 @@ void GUI::Render()
 				| ImGuiWindowFlags_NoScrollbar
 			);
 	{
-		if (ImGui::Checkbox("Enabled", &HOOKS::enabled)) {
+		if (ImGui::Checkbox("Enabled", &GameHooks::enabled)) {
 			std::string status = "Disabled";
-			if (HOOKS::enabled)
+			if (GameHooks::enabled)
 				status = "Enabled";
 			GUI::AddNotification("Status changed", status, 1.0f, GUI::notifications);
 		}
 		ImGui::InputText("Search", searchTerm.data(), searchTerm.capacity());
 		ImGui::NewLine();
-		AddCombo("Body", CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID, searchTerm.c_str());
-		AddCombo("Decal", CARS::DecalsList, GUI::selectedDecalIndex, HOOKS::decalID, searchTerm.c_str());
-		AddCombo("Wheels", CARS::WheelsList, GUI::selectedWheelsIndex, HOOKS::wheelID, searchTerm.c_str());
-		AddCombo("Boost", CARS::BoostsList, GUI::selectedBoostIndex, HOOKS::boostID, searchTerm.c_str());
-		AddCombo("Topper", CARS::ToppersList, GUI::selectedTopperIndex, HOOKS::hatID, searchTerm.c_str());
-		AddCombo("Antennas", CARS::AntennasList, GUI::selectedAntennaIndex, HOOKS::antennaID, searchTerm.c_str());
-		AddCombo("Goal Explosion", CARS::GoalsList, GUI::selectedGoalIndex, HOOKS::goalExplosionID, searchTerm.c_str());
+		AddCombo("Body", CARS::CarsList, GUI::selectedCarIndex, GameHooks::carID, searchTerm.c_str());
+		AddCombo("Decal", CARS::DecalsList, GUI::selectedDecalIndex, GameHooks::decalID, searchTerm.c_str());
+		AddCombo("Wheels", CARS::WheelsList, GUI::selectedWheelsIndex, GameHooks::wheelID, searchTerm.c_str());
+		AddCombo("Boost", CARS::BoostsList, GUI::selectedBoostIndex, GameHooks::boostID, searchTerm.c_str());
+		AddCombo("Topper", CARS::ToppersList, GUI::selectedTopperIndex, GameHooks::hatID, searchTerm.c_str());
+		AddCombo("Antennas", CARS::AntennasList, GUI::selectedAntennaIndex, GameHooks::antennaID, searchTerm.c_str());
+		AddCombo("Goal Explosion", CARS::GoalsList, GUI::selectedGoalIndex, GameHooks::goalExplosionID, searchTerm.c_str());
 
 		if (ImGui::Button("Reload Items"))
 		{
@@ -265,8 +265,8 @@ void GUI::Render()
 		if (!bakkesmodLoaded) {
 			ImGui::SameLine();
 			if (ImGui::Button("GetCarID")) {
-				GUI::AddNotification("Debug", std::to_string(HOOKS::lastLoadedCarID), 3.0f, GUI::notifications);
-				std::cout << "[DEBUG_INFO]: HOOKS::lastloadedcarID: " << HOOKS::lastLoadedCarID << std::endl;
+				GUI::AddNotification("Debug", std::to_string(GameHooks::lastLoadedCarID), 3.0f, GUI::notifications);
+				std::cout << "[DEBUG_INFO]: GameHooks::lastloadedcarID: " << GameHooks::lastLoadedCarID << std::endl;
 			}
 		}
 		#endif

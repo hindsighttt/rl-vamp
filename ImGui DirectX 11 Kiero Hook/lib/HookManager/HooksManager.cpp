@@ -2,207 +2,229 @@
 
 Hook::Hook(std::string functionName)
 {
-    this->_functionName = functionName;
-    this->_state = false;
-    this->_functionAddr = nullptr;
-    this->_detourFunctionPtr = nullptr;
-    this->_storedFunctionPtr = nullptr;
+	this->_functionName = functionName;
+	this->_state = false;
+	this->_functionAddr = nullptr;
+	this->_detourFunctionPtr = nullptr;
+	this->_storedFunctionPtr = nullptr;
 }
 
 Hook::Hook()
 {
-    this->_detourFunctionPtr = nullptr;
-    this->_functionAddr = nullptr;
-    this->_storedFunctionPtr = nullptr;
-    this->_state = false;
+	this->_detourFunctionPtr = nullptr;
+	this->_functionAddr = nullptr;
+	this->_storedFunctionPtr = nullptr;
+	this->_state = false;
 }
 
 Hook::~Hook() // Disables the hook and removes it
 {
-    if (this->_functionAddr)
-        this->DisableHook();
-    if (this->_functionAddr)
-        MH_RemoveHook(this->_functionAddr);
-    std::cout << "[Hook::~Hook]: Successfully destroyed hook " << this->_functionName << std::endl;
+	if (this->_functionAddr)
+		this->DisableHook();
+	if (this->_functionAddr)
+		MH_RemoveHook(this->_functionAddr);
+	std::cout << "[Hook::~Hook]: Successfully destroyed hook " << this->_functionName << std::endl;
 }
 
 bool Hook::InitializeHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr)
 {
-    MH_STATUS currentStatus = MH_CreateHook(targetFunctionAddr, detourFunctionPtr, &this->_storedFunctionPtr);
-    if (currentStatus != MH_OK)
-        return false;
-    this->_detourFunctionPtr = detourFunctionPtr;
-    this->_functionAddr = targetFunctionAddr;
-    return true;
+	MH_STATUS currentStatus = MH_CreateHook(targetFunctionAddr, detourFunctionPtr, &this->_storedFunctionPtr);
+	if (currentStatus != MH_OK)
+		return false;
+	this->_detourFunctionPtr = detourFunctionPtr;
+	this->_functionAddr = targetFunctionAddr;
+	return true;
+}
+
+bool Hook::InitializeHookApi(LPCWSTR targetModuleName, LPCSTR targetFunctionName, LPVOID detourFunctionPtr)
+{
+	MH_STATUS currentStatus = MH_CreateHookApi(targetModuleName, targetFunctionName, detourFunctionPtr, &this->_storedFunctionPtr);
+	if (currentStatus != MH_OK)
+		return false;
+	this->_detourFunctionPtr = detourFunctionPtr;
+	this->_functionAddr = nullptr;
+	return true;
 }
 
 void Hook::EnableHook()
 {
-    if (!this->_functionAddr) return;
-    MH_STATUS currentStatus = MH_EnableHook(this->_functionAddr);
-    if (currentStatus != MH_OK)
-        return;
-    this->_state = true;
+	if (!this->_functionAddr) return;
+	MH_STATUS currentStatus = MH_EnableHook(this->_functionAddr);
+	if (currentStatus != MH_OK)
+		return;
+	this->_state = true;
 }
 
 void Hook::DisableHook()
 {
-    if (!this->_functionAddr) return;
-    MH_STATUS currentStatus = MH_DisableHook(this->_functionAddr);
-    if (currentStatus != MH_OK)
-        return;
-    this->_state = false;
+	if (!this->_functionAddr) return;
+	MH_STATUS currentStatus = MH_DisableHook(this->_functionAddr);
+	if (currentStatus != MH_OK)
+		return;
+	this->_state = false;
 }
 
 bool Hook::ToggleHook()
 {
-    if (this->_state)
-        this->DisableHook();
-    else
-        this->EnableHook();
-    return this->_state;
+	if (this->_state)
+		this->DisableHook();
+	else
+		this->EnableHook();
+	return this->_state;
 }
 
 LPVOID Hook::GetStoredFunctionPtr()
 {
-    return this->_storedFunctionPtr;
+	return this->_storedFunctionPtr;
 }
 
 std::string Hook::GetFunctionName()
 {
-    return this->_functionName;
+	return this->_functionName;
 }
 
 HooksManager::HooksManager()
 {
-    MH_STATUS currentStatus = MH_Initialize();
-    if (currentStatus != MH_OK && currentStatus != MH_ERROR_ALREADY_INITIALIZED)
-        std::cerr << "[HooksManager::HooksManager]: Failed to initialize MinHook" << std::endl;
+	MH_STATUS currentStatus = MH_Initialize();
+	if (currentStatus != MH_OK && currentStatus != MH_ERROR_ALREADY_INITIALIZED)
+		std::cerr << "[HooksManager::HooksManager]: Failed to initialize MinHook" << std::endl;
 }
 
 HooksManager::~HooksManager()
 {
-    this->DestroyAllHooks();
-    std::cout << "[HooksManager::~HooksManager]: Destroyed HooksManager" << std::endl;
+	this->DestroyAllHooks();
+	std::cout << "[HooksManager::~HooksManager]: Destroyed HooksManager" << std::endl;
 }
 
 std::uint8_t *HooksManager::FindPattern(const wchar_t *wszModuleName, const char *szPattern)
 {
-    auto PatternToBytes = [](const char* pattern, std::vector<int>& bytes) {
-        const char* current = pattern;
-        while (*current) {
-            if (*current == ' ') {
-                ++current;
-                continue;
-            }
-            if (*current == '?') {
-                ++current;
-                if (*current == '?') ++current;
-                bytes.push_back(-1);
-            } else {
-                bytes.push_back(strtoul(current, const_cast<char**>(&current), 16));
-            }
-        }
-    };
+	auto PatternToBytes = [](const char* pattern, std::vector<int>& bytes) {
+		const char* current = pattern;
+		while (*current) {
+			if (*current == ' ') {
+				++current;
+				continue;
+			}
+			if (*current == '?') {
+				++current;
+				if (*current == '?') ++current;
+				bytes.push_back(-1);
+			} else {
+				bytes.push_back(strtoul(current, const_cast<char**>(&current), 16));
+			}
+		}
+	};
 
-    HMODULE hModule = GetModuleHandleW(wszModuleName);
-    if (!hModule) return nullptr;
+	HMODULE hModule = GetModuleHandleW(wszModuleName);
+	if (!hModule) return nullptr;
 
-    MODULEINFO modInfo = {};
-    if (!GetModuleInformation(GetCurrentProcess(), hModule, &modInfo, sizeof(MODULEINFO)))
-        return nullptr;
+	MODULEINFO modInfo = {};
+	if (!GetModuleInformation(GetCurrentProcess(), hModule, &modInfo, sizeof(MODULEINFO)))
+		return nullptr;
 
-    std::uint8_t* start = reinterpret_cast<std::uint8_t*>(modInfo.lpBaseOfDll);
-    std::size_t size = static_cast<std::size_t>(modInfo.SizeOfImage);
+	std::uint8_t* start = reinterpret_cast<std::uint8_t*>(modInfo.lpBaseOfDll);
+	std::size_t size = static_cast<std::size_t>(modInfo.SizeOfImage);
 
-    std::vector<int> patternBytes;
-    PatternToBytes(szPattern, patternBytes);
-    std::size_t patternSize = patternBytes.size();
+	std::vector<int> patternBytes;
+	PatternToBytes(szPattern, patternBytes);
+	std::size_t patternSize = patternBytes.size();
 
-    for (std::size_t i = 0; i <= size - patternSize; ++i) {
-        bool found = true;
-        for (std::size_t j = 0; j < patternSize; ++j) {
-            if (patternBytes[j] != -1 && start[i + j] != static_cast<std::uint8_t>(patternBytes[j])) {
-                found = false;
-                break;
-            }
-        }
-        if (found) {
-            return &start[i];
-        }
-    }
-    return nullptr;
+	for (std::size_t i = 0; i <= size - patternSize; ++i) {
+		bool found = true;
+		for (std::size_t j = 0; j < patternSize; ++j) {
+			if (patternBytes[j] != -1 && start[i + j] != static_cast<std::uint8_t>(patternBytes[j])) {
+				found = false;
+				break;
+			}
+		}
+		if (found) {
+			return &start[i];
+		}
+	}
+	return nullptr;
 }
 
 Hook &HooksManager::CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr, std::string functionName)
 {
-    Hook* hook = new Hook(functionName);
-    bool success = hook->InitializeHook(targetFunctionAddr, detourFunctionPtr);
-    if (!success)
-    {
-        std::cerr << "[HooksManager::CreateHook]: Failed to initialized hook for " << functionName << std::endl;
-        return *hook;
-    }
-    this->_hookVector.push_back(hook);
-    std::cout << "[HooksManager::CreateHook]: Successfully hooked " << functionName << std::endl;
-    return (*hook);
+	Hook* hook = new Hook(functionName);
+	bool success = hook->InitializeHook(targetFunctionAddr, detourFunctionPtr);
+	if (!success) {
+		std::cerr << "[HooksManager::CreateHook]: Failed to initialized hook for " << functionName << std::endl;
+		return *hook;
+	}
+	this->_hookVector.push_back(hook);
+	std::cout << "[HooksManager::CreateHook]: Successfully hooked " << functionName << std::endl;
+	return (*hook);
+}
+
+Hook& HooksManager::CreateHookApi(LPCWSTR targetModuleName, LPCSTR targetFunctionName, LPVOID detourFunctionPtr)
+{
+	Hook* hook = new Hook(targetFunctionName);
+	bool success = hook->InitializeHookApi(targetModuleName, targetFunctionName, detourFunctionPtr);
+	if (!success) {
+		std::cerr << "[HooksManager::CreateHookApi]: Failed to initialized hook for " << targetFunctionName << std::endl;
+		return *hook;
+	}
+	this->_hookVector.push_back(hook);
+	std::cout << "[HooksManager::CreateHookApi]: Successfully hooked " << targetFunctionName << std::endl;
+	return (*hook);
 }
 
 Hook *HooksManager::GetHookByName(std::string functionName)
 {
-    for (int i = 0; i < this->_hookVector.size(); i++)
-    {
-        int diff = this->_hookVector[i]->GetFunctionName().compare(functionName);
-        if (diff == 0)
-            return this->_hookVector[i];
-    }
-    return nullptr;
+	for (int i = 0; i < this->_hookVector.size(); i++)
+	{
+		int diff = this->_hookVector[i]->GetFunctionName().compare(functionName);
+		if (diff == 0)
+			return this->_hookVector[i];
+	}
+	return nullptr;
 }
 
 void HooksManager::DestroyHook(std::string functionName)
 {
-    Hook *hook = this->GetHookByName(functionName);
-    if (!hook)
-        return;
-    std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
-        return hook == currentHook;
-    });
-    delete hook;
+	Hook *hook = this->GetHookByName(functionName);
+	if (!hook)
+		return;
+	std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
+		return hook == currentHook;
+	});
+	delete hook;
 }
 
 void HooksManager::DestroyHook(Hook *hook)
 {
-    if (!hook)
-        return;
-    std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
-        return hook == currentHook;
-    });
-    delete hook;
+	if (!hook)
+		return;
+	std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
+		return hook == currentHook;
+	});
+	delete hook;
 }
 
 bool HooksManager::EnableAllHooks() // we could use MH_EnableHook(MH_ALL_HOOKS) but it would throw off our tracked enabled state
 {
-    for (int i = 0; i < this->_hookVector.size(); i++)
-        this->_hookVector[i]->EnableHook(); // this ensures we retain the state of each hook even if some fail to enable
-    return true;
+	for (int i = 0; i < this->_hookVector.size(); i++)
+		this->_hookVector[i]->EnableHook(); // this ensures we retain the state of each hook even if some fail to enable
+	return true;
 }
 
 bool HooksManager::DisableAllHooks()
 {
-    for (int i = 0; i < this->_hookVector.size(); i++)
-        this->_hookVector[i]->DisableHook();
-    return true;
+	for (int i = 0; i < this->_hookVector.size(); i++)
+		this->_hookVector[i]->DisableHook();
+	return true;
 }
 
 void HooksManager::DestroyAllHooks()
 {
-    if (!this->_hookVector.empty())
-    {
-        for (int i = 0; i < this->_hookVector.size(); i++)
-        {
-            std::cout << "[HooksManager::DestroyAllHooks]: Destroying " << this->_hookVector[i]->GetFunctionName() << " hook" << std::endl;
-            delete this->_hookVector[i];
-        }
-        this->_hookVector.clear();
-    }
+	if (!this->_hookVector.empty())
+	{
+		for (int i = 0; i < this->_hookVector.size(); i++)
+		{
+			std::cout << "[HooksManager::DestroyAllHooks]: Destroying " << this->_hookVector[i]->GetFunctionName() << " hook" << std::endl;
+			delete this->_hookVector[i];
+		}
+		this->_hookVector.clear();
+	}
 }

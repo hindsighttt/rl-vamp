@@ -9,7 +9,7 @@
 #include <algorithm>
 
 
-namespace HOOKS
+namespace GameHooks
 {
 	extern bool init;
     extern bool enabled;
@@ -23,6 +23,10 @@ namespace HOOKS
     extern int lastLoadedCarID;
     extern HooksManager *hooksManager;
     void SetupHooks();
+
+    // All hooks function definition
+    typedef __int64(__fastcall* ProcessObject)(void* caller, void* unknown, void* gameObject);
+    typedef __int64(__fastcall* ProcessObjectPreview)(void* caller, void* unknown, __int64 gameObject);
 }
 
 class Car

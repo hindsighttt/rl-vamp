@@ -54,8 +54,8 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 			InitImGui();
 			GUI::ApplyStyle();
-			if (!HOOKS::init)
-				HOOKS::SetupHooks();
+			if (!GameHooks::init)
+				GameHooks::SetupHooks();
 
 			std::cout << std::endl;
 			CARS::FillWithNULLValues(); // prevents a crash from when the items are empty in the gui
@@ -113,7 +113,7 @@ BOOL WINAPI DllMain(HMODULE hMod, DWORD dwReason, LPVOID lpReserved)
 		break;
 	case DLL_PROCESS_DETACH:
 		kiero::shutdown();
-		delete HOOKS::hooksManager;
+		delete GameHooks::hooksManager;
 		#if defined _DEBUG
 			FreeConsole();
 		#endif

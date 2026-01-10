@@ -80,19 +80,19 @@ void PRESET::LoadPreset(std::string presetName)
 
 		int itemIndex;
 		if (itemType == "Body")
-			LoadParsedItem(itemId, CARS::CarsList, GUI::selectedCarIndex, HOOKS::carID);
+			LoadParsedItem(itemId, CARS::CarsList, GUI::selectedCarIndex, GameHooks::carID);
 		else if (itemType == "Wheels")
-			LoadParsedItem(itemId, CARS::WheelsList, GUI::selectedWheelsIndex, HOOKS::wheelID);
+			LoadParsedItem(itemId, CARS::WheelsList, GUI::selectedWheelsIndex, GameHooks::wheelID);
 		else if (itemType == "Boost")
-			LoadParsedItem(itemId, CARS::BoostsList, GUI::selectedBoostIndex, HOOKS::boostID);
+			LoadParsedItem(itemId, CARS::BoostsList, GUI::selectedBoostIndex, GameHooks::boostID);
 		else if (itemType == "Antenna")
-			LoadParsedItem(itemId, CARS::AntennasList, GUI::selectedAntennaIndex, HOOKS::antennaID);
+			LoadParsedItem(itemId, CARS::AntennasList, GUI::selectedAntennaIndex, GameHooks::antennaID);
 		else if (itemType == "Hat")
-			LoadParsedItem(itemId, CARS::ToppersList, GUI::selectedTopperIndex, HOOKS::hatID);
+			LoadParsedItem(itemId, CARS::ToppersList, GUI::selectedTopperIndex, GameHooks::hatID);
 		else if (itemType == "Skin")
-			LoadParsedItem(itemId, CARS::DecalsList, GUI::selectedDecalIndex, HOOKS::decalID);
+			LoadParsedItem(itemId, CARS::DecalsList, GUI::selectedDecalIndex, GameHooks::decalID);
 		else if (itemType == "GoalExplosion")
-			LoadParsedItem(itemId, CARS::GoalsList, GUI::selectedGoalIndex, HOOKS::goalExplosionID);
+			LoadParsedItem(itemId, CARS::GoalsList, GUI::selectedGoalIndex, GameHooks::goalExplosionID);
 	}
 	presetFile.close();
 	std::cout << "[PRESET::LoadPreset]: Loaded preset: " << presetName << std::endl;

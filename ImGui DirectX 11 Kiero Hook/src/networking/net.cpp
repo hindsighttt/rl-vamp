@@ -14,6 +14,16 @@ NetworkManager::NetworkManager() {
 	this->_curl = curl;
 }
 
+NetworkManager::NetworkManager(NetworkManager const& other) {
+	*this = other;
+}
+
+NetworkManager& NetworkManager::operator=(NetworkManager const& other)
+{
+	this->_curl = other._curl;
+	return *this;
+}
+
 NetworkManager::~NetworkManager() {
 	if (!this->_curl) {
 		std::cerr << "[NetworkManager::~NetworkManager]: No CURL instance to clean" << std::endl;
