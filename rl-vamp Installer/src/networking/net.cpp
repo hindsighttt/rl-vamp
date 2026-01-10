@@ -32,19 +32,19 @@ NetworkManager::~NetworkManager() {
 	curl_easy_cleanup(this->_curl);
 }
 
-void NetworkManager::DownloadRawFile(std::string url, std::string outputhPath) {
+void NetworkManager::DownloadRawFile(std::string url, std::string outputPath) {
 	if (!this->_curl) {
 		std::cerr << "[NetworkManager::DownloadRawFile]: CURL was not initialized" << std::endl;
 		return;
 	}
 	curl_easy_reset(this->_curl);
 	FILE* fp = nullptr;
-	if (fopen_s(&fp, outputhPath.c_str(), "wb") != 0 || !fp) {
-		std::cerr << "[NetworkManager::DownloadRawFile]: Couldn't open output file for writing: " << outputhPath << std::endl;
+	if (fopen_s(&fp, outputPath.c_str(), "wb") != 0 || !fp) {
+		std::cerr << "[NetworkManager::DownloadRawFile]: Couldn't open output file for writing: " << outputPath << std::endl;
 		return;
 	}
 	if (!fp) {
-		std::cerr << "[NetworkManager::DownloadRawFile]: Couldn't open output file for writing: " << outputhPath << std::endl;
+		std::cerr << "[NetworkManager::DownloadRawFile]: Couldn't open output file for writing: " << outputPath << std::endl;
 		return;
 	}
 	curl_easy_setopt(this->_curl, CURLOPT_URL, url.c_str());
