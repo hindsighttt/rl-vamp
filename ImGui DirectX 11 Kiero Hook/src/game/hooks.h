@@ -20,6 +20,7 @@ namespace HOOKS
     extern int decalID;
     extern int antennaID;
     extern int goalExplosionID;
+    extern int lastLoadedCarID;
     extern HooksManager *hooksManager;
     void SetupHooks();
 }

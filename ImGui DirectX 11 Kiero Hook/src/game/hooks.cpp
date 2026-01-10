@@ -1,6 +1,5 @@
 #include "hooks.h"
 
-
 HooksManager *HOOKS::hooksManager = new HooksManager;
 bool HOOKS::enabled = false;
 bool HOOKS::init = false;
@@ -11,15 +10,7 @@ int HOOKS::hatID = 0;
 int HOOKS::decalID = 0;
 int HOOKS::antennaID = 0;
 int HOOKS::goalExplosionID = 0;
-
-uintptr_t base = (uintptr_t)GetModuleHandleA("RocketLeague.exe");
-uintptr_t steamDll = (uintptr_t)GetModuleHandleA("steam_api64.dll");
-
-// relative address will only be used as a fallback mechanism if the pattern changes
-uintptr_t epic_addr = 0x3B42B0; // Epic
-uintptr_t steam_addr = 0x3B2DF0; // Steam
-
-uintptr_t addr;
+int HOOKS::lastLoadedCarID = 0;
 
 bool IsValidCar(Car* car) 
 {
@@ -33,15 +24,14 @@ bool IsValidCar(Car* car)
 	return false;
 }
 
-typedef __int64(__fastcall* ProcessObject)(void* gameContext, void* unknown, void* gameObject);
+typedef __int64(__fastcall* ProcessObject)(void* caller, void* unknown, void* gameObject);
 ProcessObject fnProcessObject = nullptr;
-ProcessObject fnProcessObjectOG;
 
-__int64 __fastcall hkProcessObject(void* gameContext, void* unknown, void* gameObject) {
-	if (HOOKS::enabled)
-	{
-		if (gameObject && IsValidCar((Car*)gameObject))
-		{
+__int64 __fastcall hkProcessObject(void* caller, void* unknown, void* gameObject) {
+
+	if (HOOKS::enabled) {
+		if (gameObject && IsValidCar((Car*)gameObject)) {
+			HOOKS::lastLoadedCarID = ((Car*)gameObject)->carID;
 			Car* car = (Car*)gameObject;
 			if (HOOKS::carID != 0)
 				car->carID = HOOKS::carID;
@@ -59,29 +49,50 @@ __int64 __fastcall hkProcessObject(void* gameContext, void* unknown, void* gameO
 				car->goalExplosionID = HOOKS::goalExplosionID;
 		}
 	}
-	return fnProcessObject(gameContext, unknown, gameObject);
+
+	return fnProcessObject(caller, unknown, gameObject);
+}
+
+typedef __int64(__fastcall* ProcessObjectPreview)(void * caller, void *a2, __int64 a3);
+ProcessObjectPreview fnProcessObjectPreview = nullptr;
+ProcessObjectPreview fnProcessObjectPreviewOG;
+__int64 __fastcall hkProcessObjectPreview(void *caller, void *a2, __int64 a3) { // only used to dump the carID from the shop
+	Car* car = *(Car**)a3;
+	HOOKS::lastLoadedCarID = car->carID;
+	return fnProcessObjectPreview(caller, a2, a3);
 }
 
 void HOOKS::SetupHooks()
 {
-	std::uint8_t* OriginalAddress = hooksManager->FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9");
-	if (!steamDll)
-		addr = epic_addr;
-	else
-		addr = steam_addr;
-
-	if (OriginalAddress == nullptr) {
+	std::uint8_t* processObjectAddress = hooksManager->FindPattern(L"RocketLeague.exe", "? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? ? ? ? ? ? C3 ? ? ? ? ? ? ? ? ? E9");
+	if (processObjectAddress == nullptr) {
 		std::cerr << "[HOOKS::SetupHooks] Pattern not found!" << std::endl;
 		return;
 	}
-
-	Hook& processObject = hooksManager->CreateHook(reinterpret_cast<void*>(OriginalAddress), &hkProcessObject, "ProcessObject");
+	Hook& processObject = hooksManager->CreateHook(reinterpret_cast<void*>(processObjectAddress), &hkProcessObject, "ProcessObject");
 	processObject.EnableHook();
 	fnProcessObject = reinterpret_cast<ProcessObject>(processObject.GetStoredFunctionPtr());
 	if (!fnProcessObject) {
 		std::cerr << "[HOOKS::SetupHooks] Failed to obtain original function pointer" << std::endl;
 		return;
 	}
+
+	std::uint8_t* processObjectPreviewAddress = hooksManager->FindPattern(L"RocketLeague.exe", "48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 41 56 41 57 48 83 EC ? 49 8B F0 4C 8B F9");
+	if (processObjectAddress == nullptr) {
+		std::cerr << "[HOOKS::SetupHooks] Pattern not found!" << std::endl;
+		return;
+	}
+	Hook& processObjectPreview = hooksManager->CreateHook(reinterpret_cast<void*>(processObjectPreviewAddress), &hkProcessObjectPreview, "ProcessObjectPreview");
+	processObjectPreview.EnableHook();
+	fnProcessObjectPreview = reinterpret_cast<ProcessObjectPreview>(processObjectPreview.GetStoredFunctionPtr());
+	if (!fnProcessObjectPreview) {
+		std::cerr << "[HOOKS::SetupHooks] Failed to obtain original function pointer" << std::endl;
+		return;
+	}
+
+	#ifndef _DEBUG
+	processObjectPreview.DisableHook();
+	#endif
 
 	HOOKS::init = true;
 }

@@ -261,6 +261,16 @@ void GUI::Render()
 			GUI::AddNotification("Reload items", message, 3.0f, GUI::notifications);
 		}
 
+		#ifdef _DEBUG
+		if (!bakkesmodLoaded) {
+			ImGui::SameLine();
+			if (ImGui::Button("GetCarID")) {
+				GUI::AddNotification("Debug", std::to_string(HOOKS::lastLoadedCarID), 3.0f, GUI::notifications);
+				std::cout << "[DEBUG_INFO]: HOOKS::lastloadedcarID: " << HOOKS::lastLoadedCarID << std::endl;
+			}
+		}
+		#endif
+
 		ImGui::NewLine();
 		std::vector<const char*> presets;
 		for (int i = 0; i < PRESET::presetList.size(); i++)

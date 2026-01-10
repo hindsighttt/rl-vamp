@@ -24,8 +24,7 @@ void CARS::FillWithNULLValues() {
 	DecalsList.push_back(NoneItem);
 }
 
-void CARS::LoadAllItemsFromFile(std::string file_path)
-{
+void CARS::LoadAllItemsFromFile(std::string file_path) {
 	NetworkManager tempCurl;
 
 	tempCurl.DownloadTextFile("https://github.com/hindsighttt/rl-vamp/raw/refs/heads/main/res/items.csv", "items.csv");
@@ -37,17 +36,13 @@ void CARS::LoadAllItemsFromFile(std::string file_path)
 	CARS::ToppersList.clear();
 	CARS::GoalsList.clear();
 	CARS::DecalsList.clear();
+	CARS::FillWithNULLValues();
 
 	std::ifstream file(file_path);
-	if (!file.is_open())   
-	{  
+	if (!file.is_open()) {  
 		std::cerr << "[CARS::LoadAllItems]: Failed to open file: " << file_path << std::endl;  
 		return;  
 	}
-
-	CARS::FillWithNULLValues();
- 
-	std::vector<std::pair<std::string, int>> cars;  
 	std::string line;  
 	while (std::getline(file, line)) {  
 		std::istringstream ss(line);  
@@ -62,13 +57,11 @@ void CARS::LoadAllItemsFromFile(std::string file_path)
 		current_item.type = type;  
 		current_item.ingameName = name;  
  
-		if (type == "Body")
-		{
+		if (type == "Body") {
 			CARS::CarsList.push_back(current_item);
 			CARS::ValidCars.push_back(std::atoi(id_str.c_str()));
 		}
-		else if (type == "Wheels")
-		{
+		else if (type == "Wheels") {
 			CARS::WheelsList.push_back(current_item);
 			CARS::ValidWheels.push_back(std::atoi(id_str.c_str()));
 		}
@@ -82,7 +75,6 @@ void CARS::LoadAllItemsFromFile(std::string file_path)
 			CARS::DecalsList.push_back(current_item);
 		else if (type == "GoalExplosion")
 			CARS::GoalsList.push_back(current_item);
-		//std::cout << "[+] Loaded " << current_item.ingameName << ": " << current_item.ingameID << std::endl;
 	}  
 	file.close();
 	std::cout << "[CARS::LoadAllItemsFromFile]: Loaded " << CARS::CarsList.size()
