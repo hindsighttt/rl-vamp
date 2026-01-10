@@ -41,9 +41,9 @@ public:
 public:
     std::uint8_t*   FindPattern(const wchar_t* wszModuleName, const char *szPattern);
     Hook            &CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionPtr, std::string functionName);
-    Hook            GetHookByName(std::string functionName);
+    Hook            *GetHookByName(std::string functionName);
     void            DestroyHook(std::string functionName); // NOT_IMPLEMENTED
-    void            DestroyHook(Hook hook); // NOT_IMPLEMENTED
+    void            DestroyHook(Hook *hook); // NOT_IMPLEMENTED
     bool            EnableAllHooks();
     bool            DisableAllHooks();
     void            DestroyAllHooks();

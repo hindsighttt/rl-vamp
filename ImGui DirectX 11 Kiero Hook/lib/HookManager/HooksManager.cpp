@@ -148,15 +148,36 @@ Hook &HooksManager::CreateHook(LPVOID targetFunctionAddr, LPVOID detourFunctionP
     return (*hook);
 }
 
-Hook HooksManager::GetHookByName(std::string functionName)
+Hook *HooksManager::GetHookByName(std::string functionName)
 {
     for (int i = 0; i < this->_hookVector.size(); i++)
     {
         int diff = this->_hookVector[i]->GetFunctionName().compare(functionName);
         if (diff == 0)
-            return *this->_hookVector[i];
+            return this->_hookVector[i];
     }
-    return Hook();
+    return nullptr;
+}
+
+void HooksManager::DestroyHook(std::string functionName)
+{
+    Hook *hook = this->GetHookByName(functionName);
+    if (!hook)
+        return;
+    std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
+        return hook == currentHook;
+    });
+    delete hook;
+}
+
+void HooksManager::DestroyHook(Hook *hook)
+{
+    if (!hook)
+        return;
+    std::erase_if(this->_hookVector, [hook](Hook* currentHook) {
+        return hook == currentHook;
+    });
+    delete hook;
 }
 
 bool HooksManager::EnableAllHooks() // we could use MH_EnableHook(MH_ALL_HOOKS) but it would throw off our tracked enabled state
@@ -175,13 +196,13 @@ bool HooksManager::DisableAllHooks()
 
 void HooksManager::DestroyAllHooks()
 {
-    if (this->_hookVector.size() > 0)
+    if (!this->_hookVector.empty())
     {
         for (int i = 0; i < this->_hookVector.size(); i++)
         {
             std::cout << "[HooksManager::DestroyAllHooks]: Destroying " << this->_hookVector[i]->GetFunctionName() << " hook" << std::endl;
             delete this->_hookVector[i];
-            this->_hookVector.pop_back();
         }
+        this->_hookVector.clear();
     }
 }

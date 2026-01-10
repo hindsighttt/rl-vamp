@@ -24,7 +24,7 @@ namespace GUI
 {
 	void ApplyStyle();
 	void Render();
-	void StartupAnimation(bool &startupAnimation);
+	void StartupAnimation();
 	void DrawNotification(std::vector<Notification>& notifications);
 	void AddNotification(std::string title, std::string message, float duration, std::vector<Notification>& notifications);
 

@@ -60,17 +60,12 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			std::cout << std::endl;
 			CARS::FillWithNULLValues(); // prevents a crash from when the items are empty in the gui
 			HANDLE loadItemsThread = CreateThread(NULL, 0, LoadAllItemsThreaded, NULL, 0, NULL);
-			//if (!loadItemsThread)
-			//	CARS::LoadAllItemsFromFile("items.csv"); // fallback to regular method
 			PRESET::FindExistingPresets();
 			init = true;
 		}
 		else
 			return oPresent(pSwapChain, SyncInterval, Flags);
 	}
-
-	if (!HOOKS::init)
-		HOOKS::SetupHooks();
 
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -79,7 +74,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 	if (startupAnimation)
 		GUI::Render();
 	else
-		GUI::StartupAnimation(startupAnimation);
+		GUI::StartupAnimation();
 	ImGui::Render();
 
 	pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);

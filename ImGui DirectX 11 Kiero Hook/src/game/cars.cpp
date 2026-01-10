@@ -30,6 +30,14 @@ void CARS::LoadAllItemsFromFile(std::string file_path)
 
 	tempCurl.DownloadTextFile("https://github.com/hindsighttt/rl-vamp/raw/refs/heads/main/res/items.csv", "items.csv");
 
+	CARS::CarsList.clear();
+	CARS::WheelsList.clear();
+	CARS::BoostsList.clear();
+	CARS::AntennasList.clear();
+	CARS::ToppersList.clear();
+	CARS::GoalsList.clear();
+	CARS::DecalsList.clear();
+
 	std::ifstream file(file_path);
 	if (!file.is_open())   
 	{  

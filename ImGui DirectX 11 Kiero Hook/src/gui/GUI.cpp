@@ -19,7 +19,7 @@ void GUI::ApplyStyle()
 	style.WindowTitleAlign = ImVec2(0.5, 0.5);
 	style.ChildRounding = 12.0f;
 	style.WindowPadding = ImVec2(15, 15);
-	//style.WindowRounding = 5.0f;
+	style.WindowRounding = 0.0f;
 	GUI::statusBarHeight = 30.0f;
 	style.WindowRounding = 0.0f;
 	style.FramePadding = ImVec2(8, 6);
@@ -147,7 +147,7 @@ static void DrawGlowingBackground(float borderSize) {
 	drawList->AddRectFilled(startPosition, AddVec2(endPosition, ImVec2(0, GUI::statusBarHeight)), ImColor(49, 124, 245, brightness), style.WindowRounding);
 }
 
-static void DrawBackground(bool separator) {
+static void DrawBackground(bool separator, std::string currentStatus) {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 	ImVec2 windowPosition = ImGui::GetWindowPos();
@@ -185,10 +185,9 @@ static void DrawBackground(bool separator) {
 	drawList->AddCircleFilled(ImVec2(statusBarPosition.x + circleSize * 3, statusBarPosition.y + circleSize * 2), circleSize, ImColor(49, 124, 245, brightness));
 
 	// status bar text
-	std::string text = "Ready";
-	ImVec2 textSize = ImGui::CalcTextSize(text.c_str());
+	ImVec2 textSize = ImGui::CalcTextSize(currentStatus.c_str());
 	ImVec2 textPosition = AddVec2(statusBarPosition, ImVec2(textSize.x / 2 + circleSize * 3.0f, textSize.y / 2 + 1));
-	drawList->AddText(textPosition, textColor, text.c_str());
+	drawList->AddText(textPosition, textColor, currentStatus.c_str());
 }
 
 void GUI::Render()
@@ -301,16 +300,16 @@ void GUI::Render()
 		ImGui::Text("Press \"DELETE\" to hide the menu");
 	}
 	DrawGlowingBackground(2.0f);
-	DrawBackground(false);
+	DrawBackground(false, "Ready");
 	ImGui::End();
 }
 
-void GUI::StartupAnimation(bool &startupAnimation)
+void GUI::StartupAnimation()
 {
 	double currentTime = ImGui::GetTime();
 	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 	ImGuiIO io = ImGui::GetIO();
-	float maxTime = 3.0; // in seconds
+	float maxTime = 3.0; // if not long enough it will still play until the loading hasn't finished
 	int backgroundBrightness = 175;
 	int textBrightness = 255;
 
@@ -324,13 +323,6 @@ void GUI::StartupAnimation(bool &startupAnimation)
 	int barLength = io.DisplaySize.x;
 	barLength = std::lerp(0, barLength, currentTime / maxTime);
 	drawList->AddRectFilled(ImVec2(0, 0), ImVec2(barLength, barHeight), ImColor(49, 124, 245, 255));
-
-	/* // Now Handled by the thread
-	if (currentTime > maxTime) {
-		startupAnimation = true;
-		GUI::AddNotification("rl-vamp", "rl-vamp is succesfully loaded", 5.0f, GUI::notifications);
-	}
-	*/
 }
 
 void GUI::DrawNotification(std::vector<Notification>& notifications)
