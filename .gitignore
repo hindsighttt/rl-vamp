@@ -11,3 +11,6 @@
 /rl-vamp/.vscode
 /rl-vamp/build
 /rl-vamp/x64
+/.vs/rl-vamp
+/rl-vamp Installer/x64/Debug
+/x64/Debug
