@@ -8,11 +8,11 @@ Downloader::Downloader() {
 	this->_bakkesmodLocation = std::string(R"(C:\Users\)") + this->_localUsername + R"(\AppData\Roaming\bakkesmod\bakkesmod\plugins\)";
 
 	DownloadItem releaseVer;
-	releaseVer.url = "https://github.com/hindsighttt/rl-vamp/releases/download/v1.0.0/rl-vamp_Release.dll";
+	releaseVer.url = "https://github.com/hindsighttt/rl-vamp/releases/download/v1.0.1/rl-vamp_Release.dll";
 	releaseVer.filename = "rl-vamp_Release.dll";
 
 	DownloadItem debugVer;
-	debugVer.url = "https://github.com/hindsighttt/rl-vamp/releases/download/v1.0.0/rl-vamp_Debug.dll";
+	debugVer.url = "https://github.com/hindsighttt/rl-vamp/releases/download/v1.0.1/rl-vamp_Debug.dll";
 	debugVer.filename = "rl-vamp_Debug.dll";
 
 	this->_downloadItem.push_back(releaseVer);

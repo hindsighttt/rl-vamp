@@ -14,3 +14,5 @@
 /.vs/rl-vamp
 /rl-vamp Installer/x64/Debug
 /x64/Debug
+/rl-vamp Installer/x64/Release
+/x64/Release

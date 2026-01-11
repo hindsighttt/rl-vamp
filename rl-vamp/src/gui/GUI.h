@@ -6,7 +6,7 @@
 #include "../game/hooks.h"
 #include "../game/cars.h"
 #include "../misc/preset.h"
-#include "../../RLCHANGER.h"
+#include "../../rl_vamp.h"
 
 #include <d3d11.h>
 #include <dxgi.h>
