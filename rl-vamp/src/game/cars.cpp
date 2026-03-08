@@ -1,15 +1,17 @@
 #include "cars.h"
 
-std::vector<Item> CARS::CarsList;
-std::vector<Item> CARS::WheelsList;
-std::vector<Item> CARS::BoostsList;
-std::vector<Item> CARS::AntennasList;
-std::vector<Item> CARS::ToppersList;
-std::vector<Item> CARS::GoalsList;
-std::vector<Item> CARS::DecalsList;
-std::vector<Item> CARS::ItemList;
-std::vector<int> CARS::ValidCars;
-std::vector<int> CARS::ValidWheels;
+namespace CARS {
+	std::vector<Item> CarsList;
+	std::vector<Item> WheelsList;
+	std::vector<Item> BoostsList;
+	std::vector<Item> AntennasList;
+	std::vector<Item> ToppersList;
+	std::vector<Item> GoalsList;
+	std::vector<Item> DecalsList;
+	std::vector<Item> ItemList;
+	std::vector<int> ValidCars;
+	std::vector<int> ValidWheels;
+}
 
 void CARS::FillWithNULLValues() {
 	Item NoneItem;

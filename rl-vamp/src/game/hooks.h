@@ -11,7 +11,7 @@
 
 namespace GameHooks
 {
-	extern bool init;
+	extern bool g_init;
     extern bool enabled;
     extern int carID;
     extern int wheelID;

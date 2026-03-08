@@ -1,16 +1,18 @@
 #include "hooks.h"
 
-HooksManager *GameHooks::hooksManager = new HooksManager;
-bool GameHooks::enabled = false;
-bool GameHooks::init = false;
-int GameHooks::carID = 0;
-int GameHooks::wheelID = 0;
-int GameHooks::boostID = 0;
-int GameHooks::hatID = 0;
-int GameHooks::decalID = 0;
-int GameHooks::antennaID = 0;
-int GameHooks::goalExplosionID = 0;
-int GameHooks::lastLoadedCarID = 0;
+namespace GameHooks {
+	HooksManager* hooksManager = new HooksManager;
+	bool enabled = false;
+	bool g_init = false;
+	int carID = 0;
+	int wheelID = 0;
+	int boostID = 0;
+	int hatID = 0;
+	int decalID = 0;
+	int antennaID = 0;
+	int goalExplosionID = 0;
+	int lastLoadedCarID = 0;
+}
 
 bool IsValidCar(Car* car) 
 {
@@ -48,7 +50,6 @@ __int64 __fastcall hkProcessObject(void* caller, void* unknown, void* gameObject
 	return originalFunction(caller, unknown, gameObject);
 }
 
-
 __int64 __fastcall hkProcessObjectPreview(void* caller, void* unknown, __int64 gameObject) { // only used to dump the carID from the shop
 	static GameHooks::ProcessObjectPreview originalFunction = reinterpret_cast<GameHooks::ProcessObjectPreview>(GameHooks::hooksManager->GetHookByName("ProcessObjectPreview")->GetStoredFunctionPtr());
 
@@ -77,5 +78,5 @@ void GameHooks::SetupHooks()
 	processObjectPreview.EnableHook();
 	#endif
 
-	GameHooks::init = true;
+	GameHooks::g_init = true;
 }

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GUI_H
+#define GUI_H
+
 #include "../../lib/imgui/imgui.h"
 #include "../../lib/imgui/imgui_impl_dx11.h"
 #include "Renderer.h"
@@ -24,10 +26,10 @@ typedef struct {
 namespace GUI
 {
 	void ApplyStyle();
-	void Render();
 	void StartupAnimation();
 	void DrawNotification(std::vector<Notification>& notifications);
 	void AddNotification(std::string title, std::string message, float duration, std::vector<Notification>& notifications);
+	void Render();
 
 	extern int selectedCarIndex;
 	extern int selectedWheelsIndex;
@@ -36,6 +38,14 @@ namespace GUI
 	extern int selectedAntennaIndex;
 	extern int selectedGoalIndex;
 	extern int selectedDecalIndex;
+
+	extern bool state;
+	extern bool shouldRescale;
+
 	extern float statusBarHeight;
+	extern float scale;
+	
 	extern std::vector<Notification> notifications;
 }
+
+#endif

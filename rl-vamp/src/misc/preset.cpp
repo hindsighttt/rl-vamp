@@ -1,6 +1,8 @@
 #include "preset.h"
 
-std::vector<std::string> PRESET::presetList;
+namespace PRESET {
+	std::vector<std::string> presetList;
+}
 
 static int FindItemInList(std::vector<Item> itemList, int itemId)
 {

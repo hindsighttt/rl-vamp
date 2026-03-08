@@ -26,20 +26,20 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-bool init = false;
-bool startupAnimation = false;
+bool g_init = false;
+bool g_startupAnimation = false;
 
 DWORD WINAPI LoadAllItemsThreaded(LPVOID ThreadParameters) { // not properly handling race conditions yet, even tho it shoudln't be an issue here
 	CARS::LoadAllItemsFromFile("items.csv");
 	std::cout << "[LoadAllItemsThreaded]: Finished downloading all the items" << std::endl;
-	startupAnimation = true;
+	g_startupAnimation = true;
 	GUI::AddNotification("rl-vamp", "rl-vamp is succesfully loaded", 5.0f, GUI::notifications);
 	return 0;
 }
 
 HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 {
-	if (!init)
+	if (!g_init)
 	{
 		if (SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)& pDevice)))
 		{
@@ -54,24 +54,32 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 			InitImGui();
 			GUI::ApplyStyle();
-			if (!GameHooks::init)
+			if (!GameHooks::g_init)
 				GameHooks::SetupHooks();
-
 			std::cout << std::endl;
 			CARS::FillWithNULLValues(); // prevents a crash from when the items are empty in the gui
 			HANDLE loadItemsThread = CreateThread(NULL, 0, LoadAllItemsThreaded, NULL, 0, NULL);
 			PRESET::FindExistingPresets();
-			init = true;
+			g_init = true;
 		}
 		else
 			return oPresent(pSwapChain, SyncInterval, Flags);
 	}
 
+	if (GUI::shouldRescale) {
+		ImGuiStyle& style = ImGui::GetStyle();
+		ImGuiIO& io = ImGui::GetIO();
+		io.FontGlobalScale = GUI::scale;
+		//style.ScaleAllSizes(GUI::scale);
+		GUI::shouldRescale = false; // done rescaling
+	}
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
+
 	ImGui::NewFrame();
 
-	if (startupAnimation)
+	if (g_startupAnimation)
 		GUI::Render();
 	else
 		GUI::StartupAnimation();
@@ -87,7 +95,7 @@ DWORD WINAPI MainThread(LPVOID lpReserved)
 	bool init_hook = false;
 	do
 	{
-		if (kiero::init(kiero::RenderType::D3D11) == kiero::Status::Success)
+		if (kiero::g_init(kiero::RenderType::D3D11) == kiero::Status::Success)
 		{
 			kiero::bind(8, (void**)& oPresent, hkPresent);
 			init_hook = true;

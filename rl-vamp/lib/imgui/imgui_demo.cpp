@@ -3262,10 +3262,10 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
     static ImGuiStyle ref_saved_style;
 
     // Default to using internal storage as reference
-    static bool init = true;
-    if (init && ref == NULL)
+    static bool g_init = true;
+    if (g_init && ref == NULL)
         ref_saved_style = style;
-    init = false;
+    g_init = false;
     if (ref == NULL)
         ref = &ref_saved_style;
 

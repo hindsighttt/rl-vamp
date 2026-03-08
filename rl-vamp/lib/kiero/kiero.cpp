@@ -47,7 +47,7 @@
 static kiero::RenderType::Enum g_renderType = kiero::RenderType::None;
 static uint150_t* g_methodsTable = NULL;
 
-kiero::Status::Enum kiero::init(RenderType::Enum _renderType)
+kiero::Status::Enum kiero::g_init(RenderType::Enum _renderType)
 {
 	if (g_renderType != RenderType::None)
 	{
@@ -656,7 +656,7 @@ kiero::Status::Enum kiero::init(RenderType::Enum _renderType)
 				type = RenderType::Vulkan;
 			}
 
-			return init(type);
+			return g_init(type);
 		}
 	}
 
