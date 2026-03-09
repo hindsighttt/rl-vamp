@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../../lib/HookManager/HooksManager.hpp"
 #include "../game/cars.h"
 #include <Windows.h>
@@ -7,7 +8,6 @@
 #include <iostream>
 #include <Psapi.h>
 #include <algorithm>
-
 
 namespace GameHooks
 {

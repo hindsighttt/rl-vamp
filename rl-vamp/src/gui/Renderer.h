@@ -1,5 +1,4 @@
-#ifndef RENDERER_H
-# define RENDERER_H
+#pragma once
 
 #include "../../lib/imgui/imgui.h"
 #include "../../lib/imgui/imgui_impl_dx11.h"
@@ -12,5 +11,3 @@ namespace Renderer { // this is not the game rendering and doesn't interact with
 	const ImVec2 World2Screen(ImVec4 const &point); // w var isn't used
 	void DrawPixel(ImVec2 const& point, ImColor color);
 }
-
-#endif // !RENDERER_H

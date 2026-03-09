@@ -1,5 +1,4 @@
-#ifndef CARS_H
-# define CARS_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -31,5 +30,3 @@ namespace CARS
 	void LoadAllItemsFromFile(std::string file_path);
 	void FillWithNULLValues();
 }
-
-#endif CARS_H

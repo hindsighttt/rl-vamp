@@ -1,5 +1,4 @@
-#ifndef FILTERED_COMBO_H
-#define FILTERED_COMBO_H
+#pragma once
 
 #include "../../lib/imgui/imgui.h"
 #include <vector>
@@ -10,5 +9,3 @@
 namespace ImGui {
     bool FilteredCombo(const char *label, int *currentItem, std::vector<std::string> const &data,  int itemsCount, const char *filter);
 }
-
-#endif

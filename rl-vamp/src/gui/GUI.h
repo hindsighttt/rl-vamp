@@ -1,5 +1,4 @@
-#ifndef GUI_H
-#define GUI_H
+#pragma once
 
 #include "../../lib/imgui/imgui.h"
 #include "../../lib/imgui/imgui_impl_dx11.h"
@@ -47,5 +46,3 @@ namespace GUI
 	
 	extern std::vector<Notification> notifications;
 }
-
-#endif

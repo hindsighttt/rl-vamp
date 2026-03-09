@@ -1,5 +1,4 @@
-#ifndef PRESET_H
-# define PRESET_H
+#pragma once
 
 #include "../game/cars.h"
 #include "../game/hooks.h"
@@ -14,5 +13,3 @@ namespace PRESET {
 	void LoadPreset(std::string presetName);
 	extern std::vector<std::string> presetList;
 }
-
-#endif // !PRESET_H

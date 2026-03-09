@@ -1,5 +1,4 @@
-#ifndef NET_H
-# define NET_H
+#pragma once
 
 #include <curl/curl.h>
 #include <iostream>
@@ -16,5 +15,3 @@ public:
 private:
 	CURL* _curl;
 };
-
-#endif
