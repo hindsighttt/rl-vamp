@@ -152,11 +152,11 @@ static void DrawGlowingBackground(float borderSize) {
 }
 
 static void DrawSidebar(bool &deployed, int& currentTab) {
-	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	ImVec2 windowPosition = ImGui::GetWindowPos();
 
 	// TODO: change this
-	ImGui::BeginChild("sideBar", ImVec2(ImGui::GetWindowWidth() / 3, ImGui::GetWindowHeight()));
+	ImGui::BeginChild("sideBar", ImVec2(ImGui::GetWindowWidth() / 5, ImGui::GetWindowHeight()));
 	if (ImGui::Button("Customize")) {
 		currentTab = 0;
 	}
@@ -167,6 +167,11 @@ static void DrawSidebar(bool &deployed, int& currentTab) {
 		currentTab = 2;
 	}
 	ImGui::EndChild();
+
+	//ImVec2 separatorStart = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth() / 3, ImGui::GetWindowPos().y};
+	//ImVec2 separatorEnd = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth() / 3, ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
+	//ImColor separatorColor = ImGui::GetStyle().Colors[ImGuiCol_Separator];
+	//drawList->AddLine(separatorStart, separatorEnd, ImColor(255, 255, 255));
 }
 
 static void DrawBackground(bool separator, std::string currentStatus) {
@@ -311,9 +316,8 @@ void GUI::Render()
 	DrawSidebar(deployed, currentTab);
 	ImGui::NewLine();
 	ImGuiStyle& style = ImGui::GetStyle();
-	std::cout << style.FramePadding.y << std::endl;
 	ImGui::SetCursorPosY(originalCursorPosition.y);
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 3);
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 5);
 
 	ImGui::BeginChild("MainPart", ImVec2(0, ImGui::GetWindowHeight()));
 	if (currentTab == 0)

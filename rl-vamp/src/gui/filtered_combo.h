@@ -8,7 +8,7 @@
 #include <iostream> //only used for debugging
 
 namespace ImGui {
-    bool FilteredCombo(const char *label, int *currentItem, std::vector<std::string> data,  int itemsCount, const char *filter);
+    bool FilteredCombo(const char *label, int *currentItem, std::vector<std::string> const &data,  int itemsCount, const char *filter);
 }
 
 #endif
