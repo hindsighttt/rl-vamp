@@ -1,9 +1,6 @@
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#pragma once
 
 #include <iostream>
 #include <Windows.h>
 #include <filesystem>
 #include "src/downloader/downloader.h"
-
-#endif

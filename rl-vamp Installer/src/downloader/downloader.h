@@ -1,5 +1,4 @@
-#ifndef DOWNLOADER_H
-#define DOWNLOADER_H
+#pragma once
 
 #include "../networking/net.h"
 #include <windows.h>
@@ -26,5 +25,3 @@ private:
 	std::string _localUsername;
 	std::deque<DownloadItem> _downloadItem;
 };
-
-#endif
